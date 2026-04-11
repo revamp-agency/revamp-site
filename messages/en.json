@@ -1,5 +1,11 @@
 {
   "common": {
     "cta": "Get a free quote"
+  },
+  "nav": {
+    "servizi": "Services",
+    "foundingClients": "Founding Clients",
+    "about": "About",
+    "contact": "Contact"
   }
 }

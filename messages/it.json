@@ -1,5 +1,11 @@
 {
   "common": {
     "cta": "Richiedi un preventivo"
+  },
+  "nav": {
+    "servizi": "Servizi",
+    "foundingClients": "Clienti Fondatori",
+    "about": "Chi siamo",
+    "contact": "Contatti"
   }
 }
