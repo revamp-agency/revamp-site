@@ -97,6 +97,7 @@ export default function FinalCTA() {
                 type="text"
                 name="name"
                 required
+                aria-label={t("placeholders.name")}
                 placeholder={t("placeholders.name")}
                 className="rounded-xl border border-glass-border bg-glass-fill px-5 py-4 font-body text-body text-text-primary placeholder:text-text-tertiary transition-colors duration-200 focus:border-amber/50 focus:ring-1 focus:ring-amber/30 focus:outline-none"
               />
@@ -104,6 +105,7 @@ export default function FinalCTA() {
                 type="text"
                 name="contact"
                 required
+                aria-label={t("placeholders.contact")}
                 placeholder={t("placeholders.contact")}
                 className="rounded-xl border border-glass-border bg-glass-fill px-5 py-4 font-body text-body text-text-primary placeholder:text-text-tertiary transition-colors duration-200 focus:border-amber/50 focus:ring-1 focus:ring-amber/30 focus:outline-none"
               />
@@ -111,6 +113,7 @@ export default function FinalCTA() {
                 name="project"
                 required
                 rows={4}
+                aria-label={t("placeholders.project")}
                 placeholder={t("placeholders.project")}
                 className="resize-none rounded-xl border border-glass-border bg-glass-fill px-5 py-4 font-body text-body text-text-primary placeholder:text-text-tertiary transition-colors duration-200 focus:border-amber/50 focus:ring-1 focus:ring-amber/30 focus:outline-none"
               />

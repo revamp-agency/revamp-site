@@ -138,9 +138,9 @@ export default function ContattiPage() {
               transition={{ duration: 0.6, ease: "easeOut" }}
               className="flex flex-col gap-4"
             >
-              <input type="text" name="name" required placeholder={t("form.placeholders.name")} className={inputClass} />
-              <input type="text" name="contact" required placeholder={t("form.placeholders.contact")} className={inputClass} />
-              <textarea name="project" required rows={4} placeholder={t("form.placeholders.project")} className={`resize-none ${inputClass}`} />
+              <input type="text" name="name" required aria-label={t("form.placeholders.name")} placeholder={t("form.placeholders.name")} className={inputClass} />
+              <input type="text" name="contact" required aria-label={t("form.placeholders.contact")} placeholder={t("form.placeholders.contact")} className={inputClass} />
+              <textarea name="project" required rows={4} aria-label={t("form.placeholders.project")} placeholder={t("form.placeholders.project")} className={`resize-none ${inputClass}`} />
 
               <button
                 type="submit"

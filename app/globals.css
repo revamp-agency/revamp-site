@@ -48,6 +48,21 @@ html.lenis body {
   --glass-border: rgba(255, 255, 255, 0.10);
   --glass-fill: rgba(255, 255, 255, 0.05);
 
+/* --- Light theme --- */
+
+.light {
+  --bg-primary: #FAFAFA;
+  --bg-secondary: #F0F0F0;
+  --bg-tertiary: #E5E5E5;
+  --text-primary: #0A0A0A;
+  --text-secondary: #6B6B6B;
+  --text-tertiary: #999999;
+  --accent: #F59E0B;
+  --accent-glow: #F97316;
+  --glass-border: rgba(0, 0, 0, 0.08);
+  --glass-fill: rgba(0, 0, 0, 0.03);
+}
+
   /* Typography */
   --font-display: "Cabinet Grotesk", system-ui, sans-serif;
   --font-body: "Satoshi", system-ui, sans-serif;
@@ -284,4 +299,37 @@ html.lenis body {
 }
 .prose-custom a:hover {
   opacity: 0.8;
+}
+
+/* --- Theme color transition (scoped to theme switch) --- */
+html.transitioning-theme *,
+html.transitioning-theme *::before,
+html.transitioning-theme *::after {
+  transition: background-color 300ms ease-in-out,
+              border-color 300ms ease-in-out,
+              color 300ms ease-in-out !important;
+}
+
+/* --- Custom cursor: hide native cursor --- */
+.custom-cursor-active,
+.custom-cursor-active * {
+  cursor: none !important;
+}
+
+/* --- Focus rings --- */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* --- Reduced motion --- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

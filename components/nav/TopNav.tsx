@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
 import { useLenis } from "@/components/SmoothScroll";
+import { useTheme } from "next-themes";
+import { Sun, Moon } from "lucide-react";
 
 const navKeys = ["servizi", "foundingClients", "about", "contact"] as const;
 
@@ -21,6 +23,10 @@ export default function TopNav() {
   const pathname = usePathname();
   const lenis = useLenis();
   const [scrolled, setScrolled] = useState(false);
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => setMounted(true), []);
 
   useEffect(() => {
     if (!lenis) return;
@@ -67,6 +73,25 @@ export default function TopNav() {
           >
             {tCommon("cta")}
           </Link>
+
+          {/* Theme toggle */}
+          {mounted && (
+            <button
+              onClick={() => {
+                document.documentElement.classList.add("transitioning-theme");
+                setTheme(theme === "dark" ? "light" : "dark");
+                setTimeout(() => document.documentElement.classList.remove("transitioning-theme"), 350);
+              }}
+              className="flex h-10 w-10 items-center justify-center rounded-full text-text-secondary transition-colors duration-200 hover:text-text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-amber"
+              aria-label={theme === "dark" ? "Switch to light theme" : "Switch to dark theme"}
+            >
+              {theme === "dark" ? (
+                <Sun className="h-5 w-5" />
+              ) : (
+                <Moon className="h-5 w-5" />
+              )}
+            </button>
+          )}
 
           {/* Language toggle */}
           <div className="flex items-center gap-1 font-body text-[14px] font-medium">

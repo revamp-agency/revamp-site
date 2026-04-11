@@ -8,10 +8,11 @@ import TechStack from "@/components/sections/TechStack";
 import FoundingClients from "@/components/sections/FoundingClients";
 import FAQ from "@/components/sections/FAQ";
 import FinalCTA from "@/components/sections/FinalCTA";
+import ScrollBackground from "@/components/ScrollBackground";
 
 export default function Home() {
   return (
-    <>
+    <ScrollBackground>
       <Hero />
       <PriceShock />
       <ServicesGrid />
@@ -22,6 +23,6 @@ export default function Home() {
       <FoundingClients />
       <FAQ />
       <FinalCTA />
-    </>
+    </ScrollBackground>
   );
 }

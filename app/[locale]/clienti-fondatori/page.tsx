@@ -185,11 +185,11 @@ export default function ClientiFondatoriPage() {
               transition={{ duration: 0.6, ease: "easeOut" }}
               className="flex flex-col gap-4"
             >
-              <input type="text" name="name" required placeholder={t("form.placeholders.name")} className={inputClass} />
-              <input type="email" name="email" required placeholder={t("form.placeholders.email")} className={inputClass} />
-              <input type="text" name="whatsapp" required placeholder={t("form.placeholders.whatsapp")} className={inputClass} />
-              <input type="text" name="business" required placeholder={t("form.placeholders.business")} className={inputClass} />
-              <textarea name="project" required rows={4} placeholder={t("form.placeholders.project")} className={`resize-none ${inputClass}`} />
+              <input type="text" name="name" required aria-label={t("form.placeholders.name")} placeholder={t("form.placeholders.name")} className={inputClass} />
+              <input type="email" name="email" required aria-label={t("form.placeholders.email")} placeholder={t("form.placeholders.email")} className={inputClass} />
+              <input type="text" name="whatsapp" required aria-label={t("form.placeholders.whatsapp")} placeholder={t("form.placeholders.whatsapp")} className={inputClass} />
+              <input type="text" name="business" required aria-label={t("form.placeholders.business")} placeholder={t("form.placeholders.business")} className={inputClass} />
+              <textarea name="project" required rows={4} aria-label={t("form.placeholders.project")} placeholder={t("form.placeholders.project")} className={`resize-none ${inputClass}`} />
 
               <button
                 type="submit"
