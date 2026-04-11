@@ -17,6 +17,7 @@ export default function Home() {
       >
         {t("cta")}
       </a>
+      <div style={{ height: "300vh" }}>scroll me</div>
     </div>
   );
 }
