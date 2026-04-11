@@ -13,7 +13,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="it" className="h-full antialiased">
+    <html className="h-full antialiased">
       <head>
         <link
           href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@700,800,900&display=swap"
