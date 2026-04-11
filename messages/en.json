@@ -157,5 +157,166 @@
         "answer": "That's why we include two rounds of revisions. We work together until you're satisfied. Our goal isn't to deliver a website — it's to deliver your website."
       }
     }
+  },
+  "serviziPage": {
+    "headline": "Our services",
+    "subhead": "Everything you need to bring your business online — and make it work better.",
+    "includes": "Includes",
+    "cta": "Get a free quote →",
+    "services": {
+      "0": {
+        "title": "Websites",
+        "description": "We design and develop websites from the ground up with proprietary code. No templates, no page builders. Every site is unique, fast, responsive, and SEO-optimized.",
+        "checks": {
+          "0": "Custom design",
+          "1": "Proprietary code development (Next.js, React)",
+          "2": "Mobile optimization and speed",
+          "3": "First-year hosting included",
+          "4": "Full source code ownership"
+        }
+      },
+      "1": {
+        "title": "E-commerce",
+        "description": "Complete online stores, ready to sell. Product catalogs, secure payments, order management. Integrated with major Italian and international payment gateways.",
+        "checks": {
+          "0": "Product catalog with inventory management",
+          "1": "Secure payments (Stripe, PayPal, Satispay)",
+          "2": "Order management and automatic notifications",
+          "3": "Responsive, optimized design",
+          "4": "Admin dashboard"
+        }
+      },
+      "2": {
+        "title": "Custom Software",
+        "description": "Digital tools built exactly for your needs. Dashboards, client portals, management systems, calculators, booking tools — if you can describe it, we can build it.",
+        "checks": {
+          "0": "Requirements analysis and planning",
+          "1": "Full-stack custom development",
+          "2": "Intuitive user interface",
+          "3": "Testing and optimization",
+          "4": "Documentation and support"
+        }
+      },
+      "3": {
+        "title": "Automations",
+        "description": "We remove repetitive work from your day. We automate email sending, contact management, data syncing, notifications, and periodic reports.",
+        "checks": {
+          "0": "Current workflow analysis",
+          "1": "Automation design (n8n, Make, Zapier)",
+          "2": "Integration with your existing tools",
+          "3": "Testing and monitoring",
+          "4": "Workflow documentation"
+        }
+      },
+      "4": {
+        "title": "AI Integrations",
+        "description": "We bring artificial intelligence into your business. ChatGPT, Claude, and other models integrated into your workflows — virtual assistants, document analysis, automatic classification.",
+        "checks": {
+          "0": "Use case analysis",
+          "1": "AI model integration (OpenAI, Claude, others)",
+          "2": "Custom user interface",
+          "3": "Training and calibration",
+          "4": "Monitoring and optimization"
+        }
+      },
+      "5": {
+        "title": "Booking & Calendar",
+        "description": "Online booking systems that run themselves. Your clients book, receive automatic confirmation, and your calendar updates in real time.",
+        "checks": {
+          "0": "Booking system integrated into your site",
+          "1": "Automatic confirmations via email and WhatsApp",
+          "2": "Google Calendar sync",
+          "3": "Real-time availability management",
+          "4": "Automatic reminders"
+        }
+      },
+      "6": {
+        "title": "Chatbot & WhatsApp Bot",
+        "description": "Smart bots that work for you 24/7. They answer FAQs, collect contacts, and qualify potential clients — even at night.",
+        "checks": {
+          "0": "Custom bot for website and/or WhatsApp",
+          "1": "Response configuration and conversation flows",
+          "2": "Automatic contact collection",
+          "3": "Integration with your CRM or email",
+          "4": "Conversation reports and analytics"
+        }
+      },
+      "7": {
+        "title": "SEO & Google Maps",
+        "description": "The most beautiful website in the world is useless if nobody finds it. We optimize your online presence so the right people find you.",
+        "checks": {
+          "0": "Technical and on-page SEO optimization",
+          "1": "Google Business Profile setup",
+          "2": "Keyword research and content strategy",
+          "3": "Ranking monitoring",
+          "4": "Periodic reports"
+        }
+      }
+    }
+  },
+  "clientiFondatoriPage": {
+    "headline": "Founding Clients Program",
+    "body": "We're building something new. And we want to do it together with our first clients.\n\nWe're looking for 10 Italian businesses that want a professional website at a launch price. In return, they'll help us prove our value.",
+    "cards": {
+      "0": { "title": "Launch price", "detail": "€200 one-time (regular price: €400)" },
+      "1": { "title": "Same quality", "detail": "Proprietary code, custom design, hosting included." },
+      "2": { "title": "Priority support", "detail": "Direct communication with the team throughout development." }
+    },
+    "counter": "spots available",
+    "howItWorks": {
+      "title": "How it works",
+      "steps": {
+        "0": "Fill out the form below",
+        "1": "We'll get back to you within 24 hours",
+        "2": "If it's a good fit, we start"
+      }
+    },
+    "form": {
+      "placeholders": {
+        "name": "Your name",
+        "email": "Your email",
+        "whatsapp": "Your WhatsApp number",
+        "business": "What type of business do you run?",
+        "project": "What do you need?"
+      },
+      "submit": "Apply",
+      "submitting": "Sending…",
+      "success": "Thanks! We'll get back to you within 24 hours.",
+      "error": "Something went wrong. Please try again or contact us directly."
+    },
+    "note": "No commitment. If we're not the right fit, we'll tell you straight away."
+  },
+  "chiSiamoPage": {
+    "headline": "Technology shouldn't be a privilege.",
+    "paragraphs": {
+      "0": "Too many Italian businesses are stuck. Those with no website. Those with one they're embarrassed to show. Those who paid thousands for something that should have cost a fraction.",
+      "1": "The problem isn't the technology. The technology exists, it's powerful, it's accessible. The problem is who sells it.",
+      "2": "Agencies that inflate prices. Freelancers who disappear after delivery. Platforms that promise everything and give you a template identical to a thousand others.",
+      "3": "Revamp exists to change this.",
+      "4": "We build websites and digital tools with the same technology used by the world's best agencies. But at an accessible price. Because proprietary code, professional design, and quality shouldn't cost as much as a used car.",
+      "5": "Your business deserves to be online properly. No compromises. No surprises. No excuses."
+    },
+    "closing": "This is Revamp.",
+    "cta": "Work with us →"
+  },
+  "contattiPage": {
+    "headline": "Let's talk.",
+    "subhead": "Tell us about your project or ask us a question. We respond within 24 hours.",
+    "contactCards": {
+      "0": { "label": "Write to us", "value": "[email]", "href": "mailto:[email]" },
+      "1": { "label": "Message us on WhatsApp", "value": "[whatsapp]", "href": "https://wa.me/[whatsapp]" },
+      "2": { "label": "Call us", "value": "[phone]", "href": "tel:[phone]" }
+    },
+    "form": {
+      "placeholders": {
+        "name": "Your name",
+        "contact": "How can we reach you",
+        "project": "Briefly describe what you need"
+      },
+      "submit": "Send request",
+      "submitting": "Sending…",
+      "success": "Thanks! We'll get back to you within 24 hours.",
+      "error": "Something went wrong. Please try again or contact us directly."
+    }
   }
 }

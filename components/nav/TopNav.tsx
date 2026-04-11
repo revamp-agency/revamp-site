@@ -7,11 +7,11 @@ import { useLenis } from "@/components/SmoothScroll";
 
 const navKeys = ["servizi", "foundingClients", "about", "contact"] as const;
 
-const navAnchors: Record<string, string> = {
-  servizi: "#servizi",
-  foundingClients: "#clienti-fondatori",
-  about: "#chi-siamo",
-  contact: "#contatti",
+const navHrefs: Record<string, string> = {
+  servizi: "/servizi",
+  foundingClients: "/clienti-fondatori",
+  about: "/chi-siamo",
+  contact: "/contatti",
 };
 
 export default function TopNav() {
@@ -52,21 +52,21 @@ export default function TopNav() {
         {/* Links + CTA + language toggle — right */}
         <div className="hidden md:flex items-center gap-8">
           {navKeys.map((key) => (
-            <a
+            <Link
               key={key}
-              href={navAnchors[key]}
+              href={navHrefs[key]}
               className="font-body font-medium text-[16px] tracking-[0.01em] text-text-secondary transition-colors duration-200 hover:text-text-primary"
             >
               {t(key)}
-            </a>
+            </Link>
           ))}
 
-          <a
-            href="#contatti"
+          <Link
+            href="/contatti"
             className="ml-2 inline-flex h-12 items-center justify-center rounded-full bg-amber px-6 font-body font-bold text-[16px] tracking-[0.02em] text-bg-primary transition-transform duration-200 hover:scale-[1.02]"
           >
             {tCommon("cta")}
-          </a>
+          </Link>
 
           {/* Language toggle */}
           <div className="flex items-center gap-1 font-body text-[14px] font-medium">

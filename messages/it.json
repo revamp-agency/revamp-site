@@ -157,5 +157,166 @@
         "answer": "Per questo includiamo due giri di revisione. Lavoriamo insieme fino a quando il risultato ti soddisfa. Il nostro obiettivo non è consegnare un sito — è consegnare il tuo sito."
       }
     }
+  },
+  "serviziPage": {
+    "headline": "I nostri servizi",
+    "subhead": "Tutto quello che serve per portare la tua attività online — e farla funzionare meglio.",
+    "includes": "Cosa comprende",
+    "cta": "Richiedi un preventivo →",
+    "services": {
+      "0": {
+        "title": "Siti Web",
+        "description": "Progettiamo e sviluppiamo siti web da zero con codice proprietario. Nessun template, nessun page builder. Ogni sito è unico, veloce, responsive e ottimizzato per i motori di ricerca.",
+        "checks": {
+          "0": "Design personalizzato",
+          "1": "Sviluppo con codice proprietario (Next.js, React)",
+          "2": "Ottimizzazione mobile e velocità",
+          "3": "Hosting primo anno incluso",
+          "4": "Codice sorgente di tua proprietà"
+        }
+      },
+      "1": {
+        "title": "E-commerce",
+        "description": "Negozi online completi, pronti a vendere. Catalogo prodotti, pagamenti sicuri, gestione ordini. Integrati con i principali gateway di pagamento italiani e internazionali.",
+        "checks": {
+          "0": "Catalogo prodotti con gestione inventario",
+          "1": "Pagamenti sicuri (Stripe, PayPal, Satispay)",
+          "2": "Gestione ordini e notifiche automatiche",
+          "3": "Design responsive e ottimizzato",
+          "4": "Dashboard di amministrazione"
+        }
+      },
+      "2": {
+        "title": "Software su Misura",
+        "description": "Strumenti digitali costruiti esattamente per le tue esigenze. Dashboard, portali clienti, gestionali, calcolatori, tool di prenotazione — se puoi descriverlo, possiamo costruirlo.",
+        "checks": {
+          "0": "Analisi dei requisiti e progettazione",
+          "1": "Sviluppo full-stack personalizzato",
+          "2": "Interfaccia utente intuitiva",
+          "3": "Testing e ottimizzazione",
+          "4": "Documentazione e supporto"
+        }
+      },
+      "3": {
+        "title": "Automazioni",
+        "description": "Eliminiamo il lavoro ripetitivo dalla tua giornata. Automatizziamo l'invio di email, la gestione contatti, la sincronizzazione dati, le notifiche e i report periodici.",
+        "checks": {
+          "0": "Analisi del flusso di lavoro attuale",
+          "1": "Progettazione automazione (n8n, Make, Zapier)",
+          "2": "Integrazione con i tuoi strumenti esistenti",
+          "3": "Testing e monitoraggio",
+          "4": "Documentazione del flusso"
+        }
+      },
+      "4": {
+        "title": "Integrazioni AI",
+        "description": "Portiamo l'intelligenza artificiale nella tua attività. ChatGPT, Claude e altri modelli integrati nei tuoi processi — assistenti virtuali, analisi documenti, classificazione automatica.",
+        "checks": {
+          "0": "Analisi dei casi d'uso",
+          "1": "Integrazione modelli AI (OpenAI, Claude, altri)",
+          "2": "Interfaccia utente personalizzata",
+          "3": "Training e calibrazione",
+          "4": "Monitoraggio e ottimizzazione"
+        }
+      },
+      "5": {
+        "title": "Prenotazioni & Calendario",
+        "description": "Sistemi di prenotazione online che funzionano da soli. I tuoi clienti prenotano, ricevono conferma automatica, e il tuo calendario si aggiorna in tempo reale.",
+        "checks": {
+          "0": "Sistema di prenotazione integrato nel sito",
+          "1": "Conferme automatiche via email e WhatsApp",
+          "2": "Sincronizzazione con Google Calendar",
+          "3": "Gestione disponibilità in tempo reale",
+          "4": "Promemoria automatici"
+        }
+      },
+      "6": {
+        "title": "Chatbot & WhatsApp Bot",
+        "description": "Bot intelligenti che lavorano per te 24 ore su 24. Rispondono alle domande frequenti, raccolgono contatti e qualificano i potenziali clienti — anche di notte.",
+        "checks": {
+          "0": "Bot personalizzato per sito web e/o WhatsApp",
+          "1": "Configurazione risposte e flussi conversazionali",
+          "2": "Raccolta contatti automatica",
+          "3": "Integrazione con il tuo CRM o email",
+          "4": "Report e analisi conversazioni"
+        }
+      },
+      "7": {
+        "title": "SEO & Google Maps",
+        "description": "Il sito più bello del mondo non serve a niente se nessuno lo trova. Ottimizziamo la tua presenza online per farti trovare da chi ti sta cercando.",
+        "checks": {
+          "0": "Ottimizzazione SEO tecnica e on-page",
+          "1": "Configurazione Google Business Profile",
+          "2": "Keyword research e strategia contenuti",
+          "3": "Monitoraggio posizionamento",
+          "4": "Report periodici"
+        }
+      }
+    }
+  },
+  "clientiFondatoriPage": {
+    "headline": "Programma Clienti Fondatori",
+    "body": "Stiamo costruendo qualcosa di nuovo. E vogliamo farlo insieme ai nostri primi clienti.\n\nCerchiamo 10 attività italiane che vogliono un sito web professionale a un prezzo di lancio. In cambio, ci aiuteranno a dimostrare il nostro valore.",
+    "cards": {
+      "0": { "title": "Prezzo di lancio", "detail": "€200 una tantum (prezzo regolare: €400)" },
+      "1": { "title": "Stessa qualità", "detail": "Codice proprietario, design personalizzato, hosting incluso." },
+      "2": { "title": "Supporto prioritario", "detail": "Comunicazione diretta con il team durante tutto lo sviluppo." }
+    },
+    "counter": "posti disponibili",
+    "howItWorks": {
+      "title": "Come funziona",
+      "steps": {
+        "0": "Compila il modulo qui sotto",
+        "1": "Ti ricontattiamo entro 24 ore",
+        "2": "Se c'è un buon fit, partiamo"
+      }
+    },
+    "form": {
+      "placeholders": {
+        "name": "Il tuo nome",
+        "email": "La tua email",
+        "whatsapp": "Il tuo numero WhatsApp",
+        "business": "Che tipo di attività hai?",
+        "project": "Di cosa hai bisogno?"
+      },
+      "submit": "Candidati",
+      "submitting": "Invio in corso…",
+      "success": "Grazie! Ti ricontattiamo entro 24 ore.",
+      "error": "Qualcosa è andato storto. Riprova o scrivici direttamente."
+    },
+    "note": "Nessun impegno. Se non siamo il match giusto, te lo diciamo subito."
+  },
+  "chiSiamoPage": {
+    "headline": "La tecnologia non dovrebbe essere un privilegio.",
+    "paragraphs": {
+      "0": "Troppe attività italiane sono bloccate. Chi non ha un sito web. Chi ce l'ha, ma si vergogna a mostrarlo. Chi ha pagato migliaia di euro per qualcosa che avrebbe potuto costare una frazione.",
+      "1": "Il problema non è la tecnologia. La tecnologia c'è, è potente, è accessibile. Il problema è chi la vende.",
+      "2": "Agenzie che gonfiano i prezzi. Freelancer che spariscono dopo la consegna. Piattaforme che ti promettono tutto e ti danno un template uguale a mille altri.",
+      "3": "Revamp esiste per cambiare questo.",
+      "4": "Costruiamo siti web e strumenti digitali con la stessa tecnologia usata dalle migliori agenzie del mondo. Ma a un prezzo accessibile. Perché il codice proprietario, il design professionale e la qualità non dovrebbero costare quanto un'auto usata.",
+      "5": "Il tuo business merita di essere online come si deve. Senza compromessi. Senza sorprese. Senza scuse."
+    },
+    "closing": "Questo è Revamp.",
+    "cta": "Lavora con noi →"
+  },
+  "contattiPage": {
+    "headline": "Parliamo.",
+    "subhead": "Raccontaci il tuo progetto o facci una domanda. Rispondiamo entro 24 ore.",
+    "contactCards": {
+      "0": { "label": "Scrivici", "value": "[email]", "href": "mailto:[email]" },
+      "1": { "label": "Scrivici su WhatsApp", "value": "[whatsapp]", "href": "https://wa.me/[whatsapp]" },
+      "2": { "label": "Chiamaci", "value": "[phone]", "href": "tel:[phone]" }
+    },
+    "form": {
+      "placeholders": {
+        "name": "Il tuo nome",
+        "contact": "Come possiamo contattarti",
+        "project": "Raccontaci brevemente cosa ti serve"
+      },
+      "submit": "Invia richiesta",
+      "submitting": "Invio in corso…",
+      "success": "Grazie! Ti risponderemo entro 24 ore.",
+      "error": "Qualcosa è andato storto. Riprova o scrivici direttamente."
+    }
   }
 }

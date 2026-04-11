@@ -6,11 +6,11 @@ import { motion } from "framer-motion";
 
 const menuKeys = ["servizi", "foundingClients", "about", "contact"] as const;
 
-const menuAnchors: Record<string, string> = {
-  servizi: "#servizi",
-  foundingClients: "#clienti-fondatori",
-  about: "#chi-siamo",
-  contact: "#contatti",
+const menuHrefs: Record<string, string> = {
+  servizi: "/servizi",
+  foundingClients: "/clienti-fondatori",
+  about: "/chi-siamo",
+  contact: "/contatti",
 };
 
 const linkClass =
@@ -56,9 +56,9 @@ export default function Footer() {
             <ul className="flex flex-col gap-3">
               {menuKeys.map((key) => (
                 <li key={key}>
-                  <a href={menuAnchors[key]} className={linkClass}>
+                  <Link href={menuHrefs[key]} className={linkClass}>
                     {tNav(key)}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -85,19 +85,19 @@ export default function Footer() {
             <h4 className={columnHeadingClass}>{tFooter("legal")}</h4>
             <ul className="flex flex-col gap-3">
               <li>
-                <a href="/privacy" className={linkClass}>
+                <Link href="/privacy" className={linkClass}>
                   {tFooter("privacy")}
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="/cookies" className={linkClass}>
+                <Link href="/cookie" className={linkClass}>
                   {tFooter("cookies")}
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="/terms" className={linkClass}>
+                <Link href="/termini" className={linkClass}>
                   {tFooter("terms")}
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
