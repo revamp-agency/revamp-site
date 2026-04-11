@@ -1,4 +1,6 @@
 import PriceShock from "@/components/sections/PriceShock";
+import ServicesGrid from "@/components/sections/ServicesGrid";
+import CustomSoftware from "@/components/sections/CustomSoftware";
 import HowWeWork from "@/components/sections/HowWeWork";
 import WhyRevamp from "@/components/sections/WhyRevamp";
 import TechStack from "@/components/sections/TechStack";
@@ -18,10 +20,14 @@ export default function Home() {
       </div>
 
       <PriceShock />
+      <ServicesGrid />
+      <CustomSoftware />
       <HowWeWork />
       <WhyRevamp />
       <TechStack />
+      {/* Founding Clients — placeholder */}
       <FAQ />
+      {/* Final CTA — placeholder */}
     </>
   );
 }

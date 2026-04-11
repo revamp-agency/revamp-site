@@ -21,6 +21,31 @@
     "terms": "Terms & Conditions",
     "copyright": "© 2026 Revamp. All rights reserved."
   },
+  "services": {
+    "overline": "Our services",
+    "headline": "Everything your business needs. Online.",
+    "cards": {
+      "0": { "title": "Websites", "short": "Fast, modern, built from scratch." },
+      "1": { "title": "E-commerce", "short": "Sell online without the headaches." },
+      "2": { "title": "Custom Software", "short": "Tools built for your workflow." },
+      "3": { "title": "Automations", "short": "Less manual work. More results." },
+      "4": { "title": "AI Integrations", "short": "Artificial intelligence at your service." },
+      "5": { "title": "Booking & Calendar", "short": "Automatic appointments. Zero phone calls." },
+      "6": { "title": "Chatbot & WhatsApp Bot", "short": "Smart replies, 24/7." },
+      "7": { "title": "SEO & Google Maps", "short": "Get found by the people looking for you." }
+    }
+  },
+  "customSoftware": {
+    "overline": "Custom software",
+    "headline": "If you can imagine it, we can build it.",
+    "body": "We don't stop at websites. We build custom digital tools to solve specific problems in your business — dashboards, portals, management systems, internal tools.",
+    "blocks": {
+      "0": { "label": "Your problem", "text": "You have a manual process costing you hours every week." },
+      "1": { "label": "Our solution", "text": "We build a digital tool that does it for you." },
+      "2": { "label": "The result", "text": "More time, fewer errors, a workflow that works." }
+    },
+    "cta": "Tell us about your project →"
+  },
   "priceShock": {
     "subheadline": "A professional website. Custom code. One-time fee.",
     "body": "No templates. No hidden subscriptions. A site built for you, with code that's yours forever.",

@@ -21,6 +21,31 @@
     "terms": "Termini e Condizioni",
     "copyright": "© 2026 Revamp. Tutti i diritti riservati."
   },
+  "services": {
+    "overline": "I nostri servizi",
+    "headline": "Tutto quello che serve alla tua attività. Online.",
+    "cards": {
+      "0": { "title": "Siti Web", "short": "Veloci, moderni, costruiti su misura." },
+      "1": { "title": "E-commerce", "short": "Vendi online senza complicazioni." },
+      "2": { "title": "Software su Misura", "short": "Strumenti costruiti per il tuo flusso di lavoro." },
+      "3": { "title": "Automazioni", "short": "Meno lavoro manuale. Più risultati." },
+      "4": { "title": "Integrazioni AI", "short": "Intelligenza artificiale al servizio della tua attività." },
+      "5": { "title": "Prenotazioni & Calendario", "short": "Appuntamenti automatici. Zero telefonate." },
+      "6": { "title": "Chatbot & WhatsApp Bot", "short": "Risposte intelligenti, 24 ore su 24." },
+      "7": { "title": "SEO & Google Maps", "short": "Fatti trovare da chi ti sta cercando." }
+    }
+  },
+  "customSoftware": {
+    "overline": "Software su misura",
+    "headline": "Se puoi immaginarlo, possiamo costruirlo.",
+    "body": "Non ci limitiamo a siti web. Costruiamo strumenti digitali su misura per risolvere problemi specifici della tua attività — dashboard, portali, gestionali, tool interni.",
+    "blocks": {
+      "0": { "label": "Il tuo problema", "text": "Hai un processo manuale che ti fa perdere ore ogni settimana." },
+      "1": { "label": "La nostra soluzione", "text": "Costruiamo uno strumento digitale che lo fa al posto tuo." },
+      "2": { "label": "Il risultato", "text": "Più tempo, meno errori, un flusso di lavoro che funziona." }
+    },
+    "cta": "Parlaci del tuo progetto →"
+  },
   "priceShock": {
     "subheadline": "Un sito web professionale. Codice su misura. Una tantum.",
     "body": "Nessun template. Nessun abbonamento nascosto. Un sito costruito per te, con codice che è tuo per sempre.",
