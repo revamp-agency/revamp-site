@@ -21,6 +21,17 @@
     "terms": "Terms & Conditions",
     "copyright": "© 2026 Revamp. All rights reserved."
   },
+  "hero": {
+    "overline": "Building the digital future of Italian business.",
+    "headline": {
+      "line1": "Your website.",
+      "line2": "Built from scratch."
+    },
+    "subhead": "Custom websites, tailored software, and intelligent automations. All proprietary code, no templates.",
+    "ctaPrimary": "Get a free quote",
+    "ctaSecondary": "Explore services →",
+    "trustStrip": "100% proprietary code · Fast delivery · From €200"
+  },
   "services": {
     "overline": "Our services",
     "headline": "Everything your business needs. Online.",
