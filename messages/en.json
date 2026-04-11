@@ -20,5 +20,79 @@
     "cookies": "Cookie Policy",
     "terms": "Terms & Conditions",
     "copyright": "© 2026 Revamp. All rights reserved."
+  },
+  "priceShock": {
+    "subheadline": "A professional website. Custom code. One-time fee.",
+    "body": "No templates. No hidden subscriptions. A site built for you, with code that's yours forever.",
+    "note": "Year two renewal: €150/year for hosting and basic maintenance."
+  },
+  "howWeWork": {
+    "overline": "How we work",
+    "headline": "From first contact to live site. Simple.",
+    "steps": {
+      "0": { "title": "Let's talk", "text": "Tell us what you need. We listen." },
+      "1": { "title": "Quote", "text": "We send a clear proposal within 24 hours." },
+      "2": { "title": "We build", "text": "We develop the project. You see the progress." },
+      "3": { "title": "Live", "text": "Your site is online. The code is yours." }
+    }
+  },
+  "whyRevamp": {
+    "overline": "Why Revamp",
+    "headline": "What makes us different.",
+    "columns": {
+      "0": {
+        "title": "Proprietary code",
+        "text": "Every project is built from scratch. No templates, no page builders. The code is yours — take it wherever you want, whenever you want."
+      },
+      "1": {
+        "title": "Current technology",
+        "text": "We use the same tools as the world's best agencies. Next.js, React, AI. The difference is we don't charge you like they do."
+      },
+      "2": {
+        "title": "Transparent pricing",
+        "text": "One price. No surprises. No hidden costs. You know exactly what you're paying before we start."
+      }
+    }
+  },
+  "techStack": {
+    "overline": "Our tech stack"
+  },
+  "faq": {
+    "overline": "FAQ",
+    "headline": "Everything you need to know.",
+    "items": {
+      "0": {
+        "question": "How long does it take?",
+        "answer": "It depends on the project. A standard website is ready in a few days. For more complex projects, we define the timeline together on the first call. Either way, we work fast."
+      },
+      "1": {
+        "question": "What does the €200 price include?",
+        "answer": "A professional website built with proprietary code, responsive design, first-year hosting, and going live online. No templates, no shortcuts."
+      },
+      "2": {
+        "question": "What about year two?",
+        "answer": "The annual renewal is €150 and covers hosting, domain, and basic maintenance. You can renew or take the site elsewhere — the code is yours."
+      },
+      "3": {
+        "question": "Do I really own the code?",
+        "answer": "Yes, 100%. The source code is yours. If you ever want to switch agencies, move to a different server, or manage it in-house, you're free to do so. No lock-in."
+      },
+      "4": {
+        "question": "How many revisions are included?",
+        "answer": "Two rounds of revisions are included in the price. Additional revisions can be arranged separately."
+      },
+      "5": {
+        "question": "Do I need to understand anything technical?",
+        "answer": "No. We handle everything — from design to launch. You tell us what you need, we build it."
+      },
+      "6": {
+        "question": "How does payment work?",
+        "answer": "50% at project start, 50% on delivery. Clear and simple."
+      },
+      "7": {
+        "question": "What if I don't like the result?",
+        "answer": "That's why we include two rounds of revisions. We work together until you're satisfied. Our goal isn't to deliver a website — it's to deliver your website."
+      }
+    }
   }
 }

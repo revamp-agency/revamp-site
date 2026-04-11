@@ -1,10 +1,13 @@
-import { useTranslations } from "next-intl";
+import PriceShock from "@/components/sections/PriceShock";
+import HowWeWork from "@/components/sections/HowWeWork";
+import WhyRevamp from "@/components/sections/WhyRevamp";
+import TechStack from "@/components/sections/TechStack";
+import FAQ from "@/components/sections/FAQ";
 
 export default function Home() {
-  const t = useTranslations("common");
-
   return (
     <>
+      {/* Temporary hero placeholder */}
       <div className="flex min-h-dvh flex-col items-center justify-center gap-6 pt-24 pb-24">
         <h1 className="font-display font-black text-text-primary text-[56px] md:text-[96px] leading-none tracking-[-0.03em]">
           Revamp
@@ -13,7 +16,12 @@ export default function Home() {
           Costruiamo il futuro digitale delle imprese italiane.
         </p>
       </div>
-      <div style={{ height: "200vh" }} />
+
+      <PriceShock />
+      <HowWeWork />
+      <WhyRevamp />
+      <TechStack />
+      <FAQ />
     </>
   );
 }
