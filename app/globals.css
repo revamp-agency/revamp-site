@@ -228,7 +228,9 @@ html.lenis body {
     color: var(--text-primary);
     font-family: var(--font-body);
   }
-  html {
-    @apply font-sans;
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
   }
 }
