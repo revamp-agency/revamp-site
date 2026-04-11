@@ -5,19 +5,12 @@ export default function Home() {
 
   return (
     <div className="flex min-h-dvh flex-col items-center justify-center gap-6">
-      <h1 className="font-display font-black text-text-primary text-6xl md:text-9xl tracking-tighter">
+      <h1 className="font-display font-black text-text-primary text-[56px] md:text-[96px] leading-none tracking-[-0.03em]">
         Revamp
       </h1>
-      <p className="font-body text-text-secondary text-xl max-w-[600px] text-center">
+      <p className="font-body text-text-secondary text-[20px] max-w-[600px] text-center leading-relaxed">
         Costruiamo il futuro digitale delle imprese italiane.
       </p>
-      <a
-        href="#"
-        className="mt-4 inline-flex h-12 items-center justify-center rounded-xl bg-amber px-8 font-body font-bold text-bg-primary text-button tracking-wide transition-transform hover:scale-[1.02]"
-      >
-        {t("cta")}
-      </a>
-      <div style={{ height: "300vh" }}>scroll me</div>
     </div>
   );
 }
