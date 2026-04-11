@@ -1,7 +1,6 @@
 import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
-import ThemeProvider from "@/components/ThemeProvider";
 import SmoothScroll from "@/components/SmoothScroll";
 import TopNav from "@/components/nav/TopNav";
 import Footer from "@/components/nav/Footer";
@@ -24,17 +23,15 @@ export default async function LocaleLayout({
 
   return (
     <NextIntlClientProvider locale={locale}>
-      <ThemeProvider>
-        <SmoothScroll>
-          <LoadingScreen />
-          <CustomCursor />
-          <TopNav />
-          <PageTransition>
-            {children}
-          </PageTransition>
-          <Footer />
-        </SmoothScroll>
-      </ThemeProvider>
+      <SmoothScroll>
+        <LoadingScreen />
+        <CustomCursor />
+        <TopNav />
+        <PageTransition>
+          {children}
+        </PageTransition>
+        <Footer />
+      </SmoothScroll>
     </NextIntlClientProvider>
   );
 }
