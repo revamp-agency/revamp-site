@@ -82,6 +82,33 @@
   "techStack": {
     "overline": "Le tecnologie che utilizziamo"
   },
+  "foundingClients": {
+    "overline": "Offerta limitata",
+    "headline": "Cerchiamo 10 clienti fondatori.",
+    "body": "Stiamo selezionando i nostri primi 10 clienti. Per loro, il prezzo di lancio è di €200. Dopo, il prezzo sale a €400.",
+    "counter": "posti disponibili",
+    "checks": {
+      "0": "Sito web professionale a €200 (prezzo di lancio)",
+      "1": "Stessa qualità, stesso codice proprietario",
+      "2": "Supporto prioritario durante lo sviluppo"
+    },
+    "cta": "Candidati ora →",
+    "note": "Nessun impegno. Ti ricontattiamo entro 24 ore."
+  },
+  "finalCta": {
+    "headline": "Pronto a partire?",
+    "subhead": "Raccontaci il tuo progetto. Ti rispondiamo entro 24 ore.",
+    "placeholders": {
+      "name": "Il tuo nome",
+      "contact": "Come possiamo contattarti",
+      "project": "Raccontaci brevemente cosa ti serve"
+    },
+    "submit": "Invia richiesta",
+    "submitting": "Invio in corso…",
+    "success": "Grazie! Ti risponderemo entro 24 ore.",
+    "error": "Qualcosa è andato storto. Riprova o scrivici direttamente.",
+    "note": "Nessun impegno. Preventivo gratuito."
+  },
   "faq": {
     "overline": "Domande frequenti",
     "headline": "Tutto quello che vuoi sapere.",

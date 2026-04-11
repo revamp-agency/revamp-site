@@ -4,7 +4,9 @@ import CustomSoftware from "@/components/sections/CustomSoftware";
 import HowWeWork from "@/components/sections/HowWeWork";
 import WhyRevamp from "@/components/sections/WhyRevamp";
 import TechStack from "@/components/sections/TechStack";
+import FoundingClients from "@/components/sections/FoundingClients";
 import FAQ from "@/components/sections/FAQ";
+import FinalCTA from "@/components/sections/FinalCTA";
 
 export default function Home() {
   return (
@@ -25,9 +27,9 @@ export default function Home() {
       <HowWeWork />
       <WhyRevamp />
       <TechStack />
-      {/* Founding Clients — placeholder */}
+      <FoundingClients />
       <FAQ />
-      {/* Final CTA — placeholder */}
+      <FinalCTA />
     </>
   );
 }

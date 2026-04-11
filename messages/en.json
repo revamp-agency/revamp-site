@@ -82,6 +82,33 @@
   "techStack": {
     "overline": "Our tech stack"
   },
+  "foundingClients": {
+    "overline": "Limited offer",
+    "headline": "We're looking for 10 founding clients.",
+    "body": "We're selecting our first 10 clients. For them, the launch price is €200. After that, the price goes to €400.",
+    "counter": "spots available",
+    "checks": {
+      "0": "Professional website at €200 (launch price)",
+      "1": "Same quality, same proprietary code",
+      "2": "Priority support during development"
+    },
+    "cta": "Apply now →",
+    "note": "No commitment. We'll get back to you within 24 hours."
+  },
+  "finalCta": {
+    "headline": "Ready to start?",
+    "subhead": "Tell us about your project. We'll reply within 24 hours.",
+    "placeholders": {
+      "name": "Your name",
+      "contact": "How can we reach you",
+      "project": "Briefly describe what you need"
+    },
+    "submit": "Send request",
+    "submitting": "Sending…",
+    "success": "Thanks! We'll get back to you within 24 hours.",
+    "error": "Something went wrong. Please try again or contact us directly.",
+    "note": "No commitment. Free quote."
+  },
   "faq": {
     "overline": "FAQ",
     "headline": "Everything you need to know.",
