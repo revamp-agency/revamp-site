@@ -13,7 +13,7 @@ export default function Home() {
           Costruiamo il futuro digitale delle imprese italiane.
         </p>
       </div>
-      <div style={{ height: "300vh" }} />
+      <div style={{ height: "200vh" }} />
     </>
   );
 }

@@ -1,11 +1,24 @@
 {
   "common": {
-    "cta": "Richiedi un preventivo"
+    "cta": "Richiedi un preventivo",
+    "tagline": "Costruiamo il futuro digitale delle imprese italiane."
   },
   "nav": {
     "servizi": "Servizi",
     "foundingClients": "Clienti Fondatori",
     "about": "Chi siamo",
     "contact": "Contatti"
+  },
+  "footer": {
+    "menu": "Menu",
+    "contact": "Contatti",
+    "legal": "Legal",
+    "email": "[email]",
+    "whatsapp": "[whatsapp]",
+    "phone": "[phone]",
+    "privacy": "Privacy Policy",
+    "cookies": "Cookie Policy",
+    "terms": "Termini e Condizioni",
+    "copyright": "© 2026 Revamp. Tutti i diritti riservati."
   }
 }

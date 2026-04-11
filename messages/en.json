@@ -1,11 +1,24 @@
 {
   "common": {
-    "cta": "Get a free quote"
+    "cta": "Get a free quote",
+    "tagline": "Building the digital future of Italian business."
   },
   "nav": {
     "servizi": "Services",
     "foundingClients": "Founding Clients",
     "about": "About",
     "contact": "Contact"
+  },
+  "footer": {
+    "menu": "Menu",
+    "contact": "Contact",
+    "legal": "Legal",
+    "email": "[email]",
+    "whatsapp": "[whatsapp]",
+    "phone": "[phone]",
+    "privacy": "Privacy Policy",
+    "cookies": "Cookie Policy",
+    "terms": "Terms & Conditions",
+    "copyright": "© 2026 Revamp. All rights reserved."
   }
 }
