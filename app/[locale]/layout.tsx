@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
 import SmoothScroll from "@/components/SmoothScroll";
 import TopNav from "@/components/nav/TopNav";
+import RevampLogo from "@/components/hero/RevampLogo";
 import Footer from "@/components/nav/Footer";
 import CustomCursor from "@/components/CustomCursor";
 import LoadingScreen from "@/components/LoadingScreen";
@@ -26,6 +27,7 @@ export default async function LocaleLayout({
       <SmoothScroll>
         <LoadingScreen />
         <CustomCursor />
+        <RevampLogo />
         <TopNav />
         <PageTransition>
           {children}

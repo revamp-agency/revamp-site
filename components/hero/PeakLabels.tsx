@@ -1,16 +1,13 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useMemo } from "react";
 import { useFrame } from "@react-three/fiber";
 import { Html } from "@react-three/drei";
-import { AnimatePresence, motion } from "framer-motion";
 import * as THREE from "three";
-interface PeakData {
-  localPos: THREE.Vector3;
-  originalHeight: number;
-}
+import { AnimatePresence, motion } from "framer-motion";
+import type { Peak } from "./Mountain";
 
-const SERVICE_NAMES = [
+const SERVICES = [
   "Siti Web",
   "E-commerce",
   "Software su Misura",
@@ -21,124 +18,176 @@ const SERVICE_NAMES = [
   "SEO",
 ];
 
-const PROXIMITY_THRESHOLD = 0.6;
+const THRESHOLD = 0.7;
+const PROXIMITY_RANGE = 2.5;
 
-interface PeakLabelsProps {
-  peaks: PeakData[];
-  cursorWorldPosRef: React.RefObject<THREE.Vector3>;
+interface PeakLabelProps {
+  peak: Peak;
+  index: number;
+  cursorLocalPosRef: React.RefObject<THREE.Vector3>;
 }
 
-// Mirror the shader breathing formula on CPU
-function computeBreathOffset(
-  originalHeight: number,
-  posX: number,
-  time: number
-): number {
-  // Must match shader: smoothstep(1.0, 6.0, originalHeight)
-  const t = Math.max(0, Math.min(1, (originalHeight - 1.0) / 5.0));
-  const breathStrength = t * t * (3 - 2 * t);
-  const breath =
-    Math.sin(time * 0.7 + originalHeight * 1.5 + posX * 0.4) *
-    0.18 *
-    breathStrength;
-  const slowSwell = Math.sin(time * 0.3) * 0.05 * breathStrength;
-  return breath + slowSwell;
-}
-
-function PeakLabel({
-  peak,
-  cursorWorldPosRef,
-  serviceName,
-}: {
-  peak: PeakData;
-  cursorWorldPosRef: React.RefObject<THREE.Vector3>;
-  serviceName: string;
-}) {
+function PeakLabel({ peak, index, cursorLocalPosRef }: PeakLabelProps) {
+  const groupRef = useRef<THREE.Group>(null);
+  const textRef = useRef<HTMLSpanElement>(null);
   const [isClose, setIsClose] = useState(false);
-  const [distance, setDistance] = useState(0);
+  const prevIsCloseRef = useRef(false);
 
-  // Persistent objects — never allocate in useFrame
-  const anchorRef = useRef(new THREE.Object3D());
-  const _flatPeak = useRef(new THREE.Vector3());
-  const _flatCursor = useRef(new THREE.Vector3());
+  useFrame(({ clock }) => {
+    // Breathing offset — same formula as Mountain so label stays glued
+    const t = clock.getElapsedTime();
+    const s = peak.breathStrength;
+    const breath =
+      Math.sin(t * 0.6 + peak.basePosition.x * 0.4 + peak.basePosition.z * 0.3) *
+      0.18 *
+      s;
+    const slowSwell = Math.sin(t * 0.25) * 0.06 * s;
+    const currentY = peak.basePosition.y + breath + slowSwell;
 
-  useFrame((state) => {
-    const t = state.clock.elapsedTime;
+    if (groupRef.current) {
+      groupRef.current.position.set(
+        peak.basePosition.x,
+        currentY,
+        peak.basePosition.z
+      );
+    }
 
-    // Compute breathing offset matching shader exactly
-    const bobOffset = computeBreathOffset(
-      peak.originalHeight,
-      peak.localPos.x,
-      t
-    );
+    // Full 3D distance in group-local space
+    if (cursorLocalPosRef.current) {
+      const dx = peak.basePosition.x - cursorLocalPosRef.current.x;
+      const dy = currentY - cursorLocalPosRef.current.y;
+      const dz = peak.basePosition.z - cursorLocalPosRef.current.z;
+      const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
 
-    // Update anchor position (this is in group-local space, inherits rotation)
-    anchorRef.current.position.set(
-      peak.localPos.x,
-      peak.localPos.y + bobOffset,
-      peak.localPos.z
-    );
+      const close = dist <= THRESHOLD;
+      if (close !== prevIsCloseRef.current) {
+        prevIsCloseRef.current = close;
+        setIsClose(close);
+      }
 
-    // XZ-only distance to cursor
-    _flatPeak.current.set(peak.localPos.x, 0, peak.localPos.z);
-    _flatCursor.current.set(
-      cursorWorldPosRef.current.x,
-      0,
-      cursorWorldPosRef.current.z
-    );
-    const d = _flatPeak.current.distanceTo(_flatCursor.current);
-
-    const roundedD = Math.round(d * 100) / 100;
-    if (roundedD !== distance) setDistance(roundedD);
-    const close = d < PROXIMITY_THRESHOLD;
-    if (close !== isClose) setIsClose(close);
+      if (!close && textRef.current) {
+        textRef.current.textContent = dist.toFixed(2) + "m";
+      }
+    }
   });
 
   return (
-    <primitive object={anchorRef.current}>
-      <Html center distanceFactor={8} zIndexRange={[10, 0]}>
-        <div className="flex flex-col items-center gap-1 pointer-events-none select-none">
-          <div
-            className="w-2 h-2 rounded-full bg-amber"
-            style={{ boxShadow: "0 0 12px rgba(245,158,11,0.6)" }}
-          />
-          <div className="min-w-[80px] text-center">
+    <group ref={groupRef}>
+      <Html
+        center
+        distanceFactor={8}
+        style={{ pointerEvents: "none" }}
+      >
+        <div
+          className="flex flex-col items-center"
+          style={{ transform: "translateY(-50%)" }}
+        >
+          <div className="mb-1">
             <AnimatePresence mode="wait">
               {isClose ? (
-                <motion.span
-                  key="name"
-                  initial={{ opacity: 0, y: 4 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -4 }}
+                <motion.div
+                  key="service"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
                   transition={{ duration: 0.2 }}
-                  className="font-mono text-xs text-amber uppercase font-bold whitespace-nowrap"
                 >
-                  {serviceName}
-                </motion.span>
+                  <span className="px-2 py-0.5 rounded-full bg-[#0A0A0A]/80 backdrop-blur-sm border border-white/10 font-mono text-xs uppercase tracking-wider text-amber-500 font-bold whitespace-nowrap">
+                    {SERVICES[index]}
+                  </span>
+                </motion.div>
               ) : (
-                <motion.span
+                <motion.div
                   key="distance"
-                  initial={{ opacity: 0, y: 4 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -4 }}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
                   transition={{ duration: 0.2 }}
-                  className="font-mono text-xs text-text-secondary whitespace-nowrap"
                 >
-                  {distance.toFixed(2)}m
-                </motion.span>
+                  <span
+                    ref={textRef}
+                    className="px-2 py-0.5 rounded-full bg-[#0A0A0A]/80 backdrop-blur-sm border border-white/10 font-mono text-xs text-[#8A8A8A] whitespace-nowrap"
+                  >
+                    0.00m
+                  </span>
+                </motion.div>
               )}
             </AnimatePresence>
           </div>
+          <div
+            className="w-2 h-2 rounded-full bg-amber-500"
+            style={{ boxShadow: "0 0 12px rgba(245,158,11,0.6)" }}
+          />
         </div>
       </Html>
-    </primitive>
+    </group>
   );
 }
 
-export default function PeakLabels({
+function ConnectionLines({
   peaks,
-  cursorWorldPosRef,
-}: PeakLabelsProps) {
+  cursorLocalPosRef,
+}: {
+  peaks: Peak[];
+  cursorLocalPosRef: React.RefObject<THREE.Vector3>;
+}) {
+  const geometry = useMemo(() => {
+    const geo = new THREE.BufferGeometry();
+    const positions = new Float32Array(peaks.length * 6);
+    geo.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+    geo.setDrawRange(0, 0);
+    return geo;
+  }, [peaks.length]);
+
+  useFrame(({ clock }) => {
+    if (!cursorLocalPosRef.current) return;
+    const t = clock.getElapsedTime();
+    const positions = geometry.attributes.position.array as Float32Array;
+    let lineCount = 0;
+
+    for (const peak of peaks) {
+      const s = peak.breathStrength;
+      const breath =
+        Math.sin(t * 0.6 + peak.basePosition.x * 0.4 + peak.basePosition.z * 0.3) *
+        0.18 *
+        s;
+      const slowSwell = Math.sin(t * 0.25) * 0.06 * s;
+      const currentY = peak.basePosition.y + breath + slowSwell;
+
+      const dx = peak.basePosition.x - cursorLocalPosRef.current.x;
+      const dy = currentY - cursorLocalPosRef.current.y;
+      const dz = peak.basePosition.z - cursorLocalPosRef.current.z;
+      const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
+
+      if (dist < PROXIMITY_RANGE) {
+        const base = lineCount * 6;
+        positions[base] = cursorLocalPosRef.current.x;
+        positions[base + 1] = cursorLocalPosRef.current.y;
+        positions[base + 2] = cursorLocalPosRef.current.z;
+        positions[base + 3] = peak.basePosition.x;
+        positions[base + 4] = currentY;
+        positions[base + 5] = peak.basePosition.z;
+        lineCount++;
+      }
+    }
+
+    geometry.setDrawRange(0, lineCount * 2);
+    (geometry.attributes.position as THREE.BufferAttribute).needsUpdate = true;
+  });
+
+  return (
+    <lineSegments geometry={geometry} renderOrder={2}>
+      <lineBasicMaterial color="#F59E0B" transparent opacity={0.25} />
+    </lineSegments>
+  );
+}
+
+interface PeakLabelsProps {
+  peaks: Peak[];
+  cursorLocalPosRef: React.RefObject<THREE.Vector3>;
+}
+
+export default function PeakLabels({ peaks, cursorLocalPosRef }: PeakLabelsProps) {
   if (peaks.length === 0) return null;
 
   return (
@@ -147,10 +196,11 @@ export default function PeakLabels({
         <PeakLabel
           key={i}
           peak={peak}
-          cursorWorldPosRef={cursorWorldPosRef}
-          serviceName={SERVICE_NAMES[i] ?? `Service ${i}`}
+          index={i}
+          cursorLocalPosRef={cursorLocalPosRef}
         />
       ))}
+      <ConnectionLines peaks={peaks} cursorLocalPosRef={cursorLocalPosRef} />
     </>
   );
 }
