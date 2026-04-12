@@ -3,11 +3,14 @@
 import { useMemo } from "react";
 import * as THREE from "three";
 import { createNoise2D } from "simplex-noise";
+import alea from "alea";
+
+const SEED = "c";
+const prng = alea(SEED);
+const noise2D = createNoise2D(prng);
 
 export default function Mountain() {
   const { solidGeo, wfGeo } = useMemo(() => {
-    const noise2D = createNoise2D();
-
     const WIDTH = 24;
     const DEPTH = 16;
     const SEG_X = 280;
@@ -35,26 +38,32 @@ export default function Mountain() {
       // 3. Multi-octave noise with high-frequency detail
       const h =
         noise2D(x * 0.18, z * 0.18) * 1.0 +
-        noise2D(x * 0.40, z * 0.40) * 0.55 +
-        noise2D(x * 0.85, z * 0.85) * 0.30 +
-        noise2D(x * 1.8, z * 1.8) * 0.15 +
-        noise2D(x * 3.5, z * 3.5) * 0.08;
+        noise2D(x * 0.40, z * 0.40) * 0.65 +
+        noise2D(x * 0.85, z * 0.85) * 0.40 +
+        noise2D(x * 1.8, z * 1.8) * 0.22 +
+        noise2D(x * 3.5, z * 3.5) * 0.13 +
+        noise2D(x * 6.5, z * 6.5) * 0.06;
 
-      // 4. Central mountain mass
-      const centerMountain = (h * 0.5 + 0.5) * centerEnvelope * 5.0;
+      // 4. Central mountain mass with peak sharpening
+      const rawCenter = (h * 0.5 + 0.5) * centerEnvelope * 5.0;
+      const centerMountain = Math.pow(rawCenter / 5.0, 0.85) * 5.5;
 
       // 5. Edge terrain — hills across the entire plane, no flat areas
       const edgeHills =
-        noise2D(x * 0.25, z * 0.25) * 0.8 +
-        noise2D(x * 0.55, z * 0.55) * 0.35 +
-        noise2D(x * 1.2, z * 1.2) * 0.15;
-      const edgeTerrain = (edgeHills * 0.5 + 0.5) * 1.2;
+        noise2D(x * 0.25, z * 0.25) * 1.1 +
+        noise2D(x * 0.55, z * 0.55) * 0.55 +
+        noise2D(x * 1.2, z * 1.2) * 0.25;
+      const edgeTerrain = (edgeHills * 0.5 + 0.5) * 2.2;
 
       // 6. Combine: central mass dominates where tall, edge hills fill everywhere else
       let height = Math.max(centerMountain, edgeTerrain);
 
       // 7. Micro-texture everywhere
       height += noise2D(x * 4, z * 4) * 0.05;
+
+      // Safety clamp
+      if (!isFinite(height)) height = 0;
+      height = Math.max(0, Math.min(height, 12));
 
       pos.setY(i, height);
     }
@@ -79,9 +88,22 @@ export default function Mountain() {
 
     pos.needsUpdate = true;
     geo.computeVertexNormals();
+    geo.computeBoundingSphere();
 
-    // Wireframe from same displaced geometry
+    // Wireframe from the same displaced geometry
     const wfGeo = new THREE.WireframeGeometry(geo);
+
+    // Vertex colors: peaks brighter, slopes dimmer
+    const wfPos = wfGeo.attributes.position;
+    const colors = new Float32Array(wfPos.count * 3);
+    for (let i = 0; i < wfPos.count; i++) {
+      const heightNorm = Math.min(Math.max(wfPos.getY(i) / 5.5, 0), 1);
+      const brightness = 0.55 + heightNorm * 0.45;
+      colors[i * 3] = brightness;
+      colors[i * 3 + 1] = brightness;
+      colors[i * 3 + 2] = brightness;
+    }
+    wfGeo.setAttribute("color", new THREE.BufferAttribute(colors, 3));
 
     return { solidGeo: geo, wfGeo };
   }, []);
@@ -96,16 +118,16 @@ export default function Mountain() {
           depthWrite={true}
           side={THREE.DoubleSide}
           polygonOffset={true}
-          polygonOffsetFactor={1}
-          polygonOffsetUnits={1}
+          polygonOffsetFactor={4}
+          polygonOffsetUnits={4}
         />
       </mesh>
       {/* Wireframe on top, depth-tested against the solid */}
       <lineSegments geometry={wfGeo} renderOrder={1}>
         <lineBasicMaterial
-          color={0xffffff}
+          vertexColors
           transparent
-          opacity={0.65}
+          opacity={0.9}
           depthTest={true}
           depthWrite={false}
         />
