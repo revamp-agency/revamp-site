@@ -30,7 +30,14 @@
     "subhead": "Siti web su misura, software personalizzato e automazioni intelligenti. Tutto con codice proprietario, nessun template.",
     "ctaPrimary": "Richiedi un preventivo",
     "ctaSecondary": "Scopri i servizi →",
-    "trustStrip": "Codice 100% proprietario · Consegna rapida · Da €200"
+    "trustStrip": "Codice 100% proprietario · Consegna rapida · Da €200",
+    "manifesto": {
+      "label": "// MANIFESTO",
+      "line1": "Costruiamo siti web e strumenti digitali",
+      "line2": "con codice proprietario",
+      "line3": "per le imprese italiane.",
+      "line4": "Senza compromessi."
+    }
   },
   "services": {
     "overline": "I nostri servizi",

@@ -1,4 +1,3 @@
-import Hero from "@/components/sections/Hero";
 import PriceShock from "@/components/sections/PriceShock";
 import ServicesGrid from "@/components/sections/ServicesGrid";
 import CustomSoftware from "@/components/sections/CustomSoftware";
@@ -9,6 +8,8 @@ import FoundingClients from "@/components/sections/FoundingClients";
 import FAQ from "@/components/sections/FAQ";
 import FinalCTA from "@/components/sections/FinalCTA";
 import ScrollBackground from "@/components/ScrollBackground";
+
+import Hero from "@/components/hero/Hero";
 
 export default function Home() {
   return (

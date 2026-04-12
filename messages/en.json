@@ -30,7 +30,14 @@
     "subhead": "Custom websites, tailored software, and intelligent automations. All proprietary code, no templates.",
     "ctaPrimary": "Get a free quote",
     "ctaSecondary": "Explore services →",
-    "trustStrip": "100% proprietary code · Fast delivery · From €200"
+    "trustStrip": "100% proprietary code · Fast delivery · From €200",
+    "manifesto": {
+      "label": "// MANIFESTO",
+      "line1": "We build websites and digital tools",
+      "line2": "with proprietary code",
+      "line3": "for Italian businesses.",
+      "line4": "No compromises."
+    }
   },
   "services": {
     "overline": "Our services",
