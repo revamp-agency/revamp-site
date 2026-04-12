@@ -17,9 +17,9 @@ export default function Hero() {
         >
           <PerspectiveCamera
             makeDefault
-            position={[0, 2, 8]}
-            fov={62}
-            onUpdate={(cam) => cam.lookAt(0, 1.5, -2)}
+            position={[0.1, 2.2, 6.3]}
+            fov={59}
+            onUpdate={(cam) => cam.lookAt(0.5, 1.5, -1.0)}
           />
           <Mountain />
         </Canvas>
