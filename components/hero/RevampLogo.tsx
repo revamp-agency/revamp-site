@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
 import { useLenis } from "@/components/SmoothScroll";
 
+
 export default function RevampLogo() {
   const t = useTranslations("hero");
   const pathname = usePathname();
@@ -45,13 +46,32 @@ export default function RevampLogo() {
   // Static small version for secondary pages
   if (!isHomepage) {
     return (
-      <div className="fixed top-8 left-8 z-40">
-        <Link
-          href="/"
-          className="font-display font-black text-[22px] tracking-tighter text-text-primary leading-none"
-        >
-          REVAMP
-        </Link>
+      <div className="fixed top-8 left-8 z-50">
+        <div style={{ position: "relative", display: "inline-flex", alignItems: "center" }}>
+          {/* Backdrop renders first = paints behind Link */}
+          <div
+            style={{
+              position: "absolute",
+              top: "-8px",
+              left: "-12px",
+              right: "-12px",
+              bottom: "-8px",
+              borderRadius: "12px",
+              background: "rgba(10, 10, 10, 0.75)",
+              backdropFilter: "blur(16px)",
+              WebkitBackdropFilter: "blur(16px)",
+              border: "1px solid rgba(255,255,255,0.08)",
+            }}
+          />
+          {/* Link renders second = paints on top */}
+          <Link
+            href="/"
+            className="font-display font-black text-[22px] tracking-tighter text-text-primary leading-none"
+            style={{ position: "relative" }}
+          >
+            REVAMP
+          </Link>
+        </div>
       </div>
     );
   }
@@ -67,11 +87,13 @@ export default function RevampLogo() {
         </motion.h1>
       </Link>
       <motion.p
-        className="font-mono text-xs text-text-secondary max-w-[320px] overflow-hidden"
+        className="font-mono text-text-secondary overflow-hidden"
         style={{
           opacity: subtitleOpacity,
           maxHeight: subtitleMaxHeight,
           marginTop: subtitleMarginTop,
+          fontSize: "21px",
+          width: "100%",
         }}
       >
         {t("subtitle")}

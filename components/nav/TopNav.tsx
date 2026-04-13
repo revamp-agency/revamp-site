@@ -79,20 +79,17 @@ export default function TopNav() {
         onMouseEnter={() => setHoverExpanded(true)}
         onMouseLeave={() => setHoverExpanded(false)}
       >
-        <motion.div
-          layout
-          transition={{ type: "spring", stiffness: 280, damping: 32 }}
-          className="flex items-center gap-1 rounded-full bg-bg-secondary/85 backdrop-blur-xl border border-glass-border px-3 py-2"
-        >
+        <div className="flex items-center gap-1 rounded-full bg-bg-secondary/85 backdrop-blur-xl border border-glass-border px-3 py-2">
           {/* Nav links — visible on scroll or hover */}
           <AnimatePresence>
             {showLinks && (
               <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.15 }}
+                initial={{ width: 0, opacity: 0 }}
+                animate={{ width: "auto", opacity: 1 }}
+                exit={{ width: 0, opacity: 0 }}
+                transition={{ duration: 0.25, ease: [0.25, 0.1, 0.25, 1] }}
                 className="flex items-center gap-1 overflow-hidden"
+                style={{ minWidth: 0 }}
               >
                 {navKeys.map((key) => (
                   <Link
@@ -102,13 +99,9 @@ export default function TopNav() {
                   >
                     {activeKey === key && (
                       <motion.div
-                        layoutId="nav-selector"
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
                         className="absolute inset-0 rounded-full bg-amber/20 border border-amber/40"
-                        transition={{
-                          type: "spring",
-                          stiffness: 280,
-                          damping: 32,
-                        }}
                       />
                     )}
                     <span className="relative z-10">{t(key)}</span>
@@ -121,37 +114,40 @@ export default function TopNav() {
             )}
           </AnimatePresence>
 
-          {/* Theme toggle */}
-          {mounted && (
-            <button
-              onClick={toggleTheme}
-              className="flex h-8 w-8 items-center justify-center rounded-full text-text-secondary transition-colors duration-200 hover:text-text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-amber"
-              aria-label={
-                theme === "dark"
-                  ? "Switch to light theme"
-                  : "Switch to dark theme"
-              }
+          {/* Right-side controls — anchored, never reflow */}
+          <div className="flex items-center gap-1 flex-shrink-0">
+            {/* Theme toggle */}
+            {mounted && (
+              <button
+                onClick={toggleTheme}
+                className="flex h-8 w-8 items-center justify-center rounded-full text-text-secondary transition-colors duration-200 hover:text-text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-amber"
+                aria-label={
+                  theme === "dark"
+                    ? "Switch to light theme"
+                    : "Switch to dark theme"
+                }
+              >
+                {theme === "dark" ? (
+                  <Sun className="h-4 w-4" />
+                ) : (
+                  <Moon className="h-4 w-4" />
+                )}
+              </button>
+            )}
+
+            {/* Divider */}
+            <div className="w-px h-5 bg-glass-border mx-1" />
+
+            {/* Language toggle */}
+            <Link
+              href={pathname}
+              locale={nextLocale}
+              className="px-2 py-1 font-body text-[13px] font-bold text-text-secondary transition-colors duration-200 hover:text-text-primary uppercase"
             >
-              {theme === "dark" ? (
-                <Sun className="h-4 w-4" />
-              ) : (
-                <Moon className="h-4 w-4" />
-              )}
-            </button>
-          )}
-
-          {/* Divider */}
-          <div className="w-px h-5 bg-glass-border mx-1" />
-
-          {/* Language toggle */}
-          <Link
-            href={pathname}
-            locale={nextLocale}
-            className="px-2 py-1 font-body text-[13px] font-bold text-text-secondary transition-colors duration-200 hover:text-text-primary uppercase"
-          >
-            {nextLocale}
-          </Link>
-        </motion.div>
+              {nextLocale}
+            </Link>
+          </div>
+        </div>
       </nav>
 
       {/* Mobile nav */}
