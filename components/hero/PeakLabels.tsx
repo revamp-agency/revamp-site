@@ -21,18 +21,8 @@ const SERVICES = [
 // 2D screen-space thresholds (normalized 0–10 scale)
 const SERVICE_THRESHOLD = 0.7;
 const CONNECTION_RANGE = 2.5;
-const CONNECTION_LINE_WIDTH = 3.5;
+const CONNECTION_LINE_WIDTH = 1;
 const CONNECTION_OPACITY = 0.25;
-
-function breathingY(peak: Peak, t: number, breathingSpeed: number): number {
-  const s = peak.breathStrength;
-  const breath =
-    Math.sin(t * breathingSpeed + peak.basePosition.x * 0.4 + peak.basePosition.z * 0.3) *
-    0.18 *
-    s;
-  const slowSwell = Math.sin(t * 0.25) * 0.06 * s;
-  return peak.basePosition.y + breath + slowSwell;
-}
 
 // ── Individual peak label ──
 
@@ -43,35 +33,22 @@ interface PeakLabelProps {
   index: number;
   groupRef: React.RefObject<THREE.Group | null>;
   mouseRef: React.RefObject<{ x: number; y: number } | null>;
-  breathingSpeed: number;
 }
 
-function PeakLabel({ peak, index, groupRef, mouseRef, breathingSpeed }: PeakLabelProps) {
-  const labelGroupRef = useRef<THREE.Group>(null);
+function PeakLabel({ peak, index, groupRef, mouseRef }: PeakLabelProps) {
   const textRef = useRef<HTMLSpanElement>(null);
   const [isClose, setIsClose] = useState(false);
   const prevIsCloseRef = useRef(false);
 
-  useFrame(({ camera, size, clock }) => {
-    const t = clock.getElapsedTime();
-    const currentY = breathingY(peak, t, breathingSpeed);
-
-    if (labelGroupRef.current) {
-      labelGroupRef.current.position.set(
-        peak.basePosition.x,
-        currentY,
-        peak.basePosition.z
-      );
-    }
-
+  useFrame(({ camera, size }) => {
     if (!mouseRef.current || !groupRef.current) return;
 
     // Cursor pixel position (mouseRef is normalized -1 to +1)
     const cursorPx = (mouseRef.current.x + 1) / 2 * size.width;
     const cursorPy = (mouseRef.current.y + 1) / 2 * size.height;
 
-    // Peak local → world → screen
-    _labelProjVec.set(peak.basePosition.x, currentY, peak.basePosition.z);
+    // Peak at rest position → world → screen
+    _labelProjVec.set(peak.basePosition.x, peak.basePosition.y, peak.basePosition.z);
     groupRef.current.localToWorld(_labelProjVec);
     _labelProjVec.project(camera);
     const peakPx = (_labelProjVec.x + 1) / 2 * size.width;
@@ -93,7 +70,7 @@ function PeakLabel({ peak, index, groupRef, mouseRef, breathingSpeed }: PeakLabe
   });
 
   return (
-    <group ref={labelGroupRef}>
+    <group position={[peak.basePosition.x, peak.basePosition.y, peak.basePosition.z]}>
       <Html
         center
         distanceFactor={8}
@@ -161,7 +138,6 @@ interface ConnectionLinesProps {
   groupRef: React.RefObject<THREE.Group | null>;
   mouseRef: React.RefObject<{ x: number; y: number } | null>;
   cursorLocalPosRef: React.RefObject<THREE.Vector3 | null>;
-  breathingSpeed: number;
 }
 
 function ConnectionLines({
@@ -169,15 +145,12 @@ function ConnectionLines({
   groupRef,
   mouseRef,
   cursorLocalPosRef,
-  breathingSpeed,
 }: ConnectionLinesProps) {
   const [lines, setLines] = useState<ActiveLine[]>([]);
   const prevKeysRef = useRef("");
 
-  useFrame(({ camera, size, clock }) => {
+  useFrame(({ camera, size }) => {
     if (!mouseRef.current || !groupRef.current || !cursorLocalPosRef.current) return;
-
-    const t = clock.getElapsedTime();
 
     // Cursor pixel position (mouseRef is normalized -1 to +1)
     const cursorPx = (mouseRef.current.x + 1) / 2 * size.width;
@@ -187,10 +160,9 @@ function ConnectionLines({
 
     for (let i = 0; i < peaks.length; i++) {
       const peak = peaks[i];
-      const currentY = breathingY(peak, t, breathingSpeed);
 
-      // Peak local → world (apply group transform)
-      _projVec.set(peak.basePosition.x, currentY, peak.basePosition.z);
+      // Peak at rest position → world (apply group transform)
+      _projVec.set(peak.basePosition.x, peak.basePosition.y, peak.basePosition.z);
       groupRef.current.localToWorld(_projVec);
 
       // Project peak to screen pixels
@@ -211,7 +183,7 @@ function ConnectionLines({
             cursorLocalPosRef.current.y,
             cursorLocalPosRef.current.z,
           ],
-          to: [peak.basePosition.x, currentY, peak.basePosition.z],
+          to: [peak.basePosition.x, peak.basePosition.y, peak.basePosition.z],
           opacity: fadedOpacity,
         });
       }
@@ -250,7 +222,6 @@ interface PeakLabelsProps {
   groupRef: React.RefObject<THREE.Group | null>;
   mouseRef: React.RefObject<{ x: number; y: number } | null>;
   cursorLocalPosRef: React.RefObject<THREE.Vector3 | null>;
-  breathingSpeed: number;
 }
 
 export default function PeakLabels({
@@ -258,7 +229,6 @@ export default function PeakLabels({
   groupRef,
   mouseRef,
   cursorLocalPosRef,
-  breathingSpeed,
 }: PeakLabelsProps) {
   if (peaks.length === 0) return null;
 
@@ -271,7 +241,6 @@ export default function PeakLabels({
           index={i}
           groupRef={groupRef}
           mouseRef={mouseRef}
-          breathingSpeed={breathingSpeed}
         />
       ))}
       <ConnectionLines
@@ -279,7 +248,6 @@ export default function PeakLabels({
         groupRef={groupRef}
         mouseRef={mouseRef}
         cursorLocalPosRef={cursorLocalPosRef}
-        breathingSpeed={breathingSpeed}
       />
     </>
   );
