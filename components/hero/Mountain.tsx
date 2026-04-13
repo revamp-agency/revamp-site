@@ -5,6 +5,7 @@ import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { createNoise2D } from "simplex-noise";
 import alea from "alea";
+import { useControls, folder } from "leva";
 import PeakLabels from "./PeakLabels";
 
 const SEED = "c";
@@ -31,7 +32,7 @@ const RUGGEDNESS = 1.15;
 const LINE_OPACITY = 1.00;
 const PEAK_BRIGHTNESS_BOOST = 1.00;
 
-function smoothstep(edge0: number, edge1: number, x: number): number {
+export function smoothstep(edge0: number, edge1: number, x: number): number {
   const t = Math.max(0, Math.min(1, (x - edge0) / (edge1 - edge0)));
   return t * t * (3 - 2 * t);
 }
@@ -61,6 +62,12 @@ interface MountainProps {
 }
 
 export default function Mountain({ mouseRef }: MountainProps) {
+  const { breathingSpeed } = useControls({
+    Breathing: folder({
+      breathingSpeed: { value: 0.25, min: 0.05, max: 1.0, step: 0.05 },
+    }),
+  });
+
   const groupRef = useRef<THREE.Group>(null);
   const basePositionsRef = useRef<Float32Array | null>(null);
   const breathStrengthRef = useRef<Float32Array | null>(null);
@@ -170,41 +177,28 @@ export default function Mountain({ mouseRef }: MountainProps) {
     breathStrengthRef.current = bStrength;
     solidGeoRef.current = geo;
 
-    // Peak detection — collect up to 20 candidates with minimum spacing
+    // Peak detection — all local maxima in front 2/3 of the plane
+    const FRONT_CUTOFF_Z = -2.67; // back 1/3 cutoff: -8 + 16/3 ≈ -2.67
+    const SPREAD_MIN = 0.7;
+
     const localMaxima: { index: number; x: number; y: number; z: number }[] = [];
     for (let row = 1; row < rows - 1; row++) {
       for (let col = 1; col < cols - 1; col++) {
         const idx = row * cols + col;
         const ht = pos.getY(idx);
+        const z = pos.getZ(idx);
         if (
+          z > FRONT_CUTOFF_Z &&
           ht > pos.getY((row - 1) * cols + col) &&
           ht > pos.getY((row + 1) * cols + col) &&
           ht > pos.getY(row * cols + (col - 1)) &&
           ht > pos.getY(row * cols + (col + 1))
         ) {
-          localMaxima.push({ index: idx, x: pos.getX(idx), y: ht, z: pos.getZ(idx) });
+          localMaxima.push({ index: idx, x: pos.getX(idx), y: ht, z });
         }
       }
     }
     localMaxima.sort((a, b) => b.y - a.y);
-
-    const candidates: Peak[] = [];
-    for (const pk of localMaxima) {
-      if (candidates.length >= 20) break;
-      const tooClose = candidates.some((p) => {
-        const dx = p.basePosition.x - pk.x;
-        const dz = p.basePosition.z - pk.z;
-        return Math.sqrt(dx * dx + dz * dz) < 1.5;
-      });
-      if (!tooClose) {
-        candidates.push({
-          index: pk.index,
-          basePosition: new THREE.Vector3(pk.x, pk.y, pk.z),
-          originalHeight: pk.y,
-          breathStrength: smoothstep(0.8, 4.5, pk.y),
-        });
-      }
-    }
 
     // Visibility filter — raycast from camera to each candidate through the mesh
     const tempMesh = new THREE.Mesh(geo);
@@ -217,16 +211,35 @@ export default function Mountain({ mouseRef }: MountainProps) {
     const visRaycaster = new THREE.Raycaster();
 
     const selectedPeaks: Peak[] = [];
-    for (const pk of candidates) {
-      if (selectedPeaks.length >= 8) break;
-      peakWorld.set(pk.basePosition.x, pk.basePosition.y - 0.5, pk.basePosition.z);
+    for (const pk of localMaxima) {
+      peakWorld.set(pk.x, pk.y - 0.5, pk.z);
       rayDir.copy(peakWorld).sub(camPos).normalize();
       visRaycaster.set(camPos, rayDir);
       const hits = visRaycaster.intersectObject(tempMesh);
       if (hits.length > 0 && hits[0].point.distanceTo(peakWorld) < 0.3) {
-        selectedPeaks.push(pk);
+        // Spread filter: reject if too close in xz to any already-selected candidate
+        const tooClose = selectedPeaks.some((p) => {
+          const dx = p.basePosition.x - pk.x;
+          const dz = p.basePosition.z - pk.z;
+          return Math.sqrt(dx * dx + dz * dz) < SPREAD_MIN;
+        });
+        if (!tooClose) {
+          selectedPeaks.push({
+            index: pk.index,
+            basePosition: new THREE.Vector3(pk.x, pk.y, pk.z),
+            originalHeight: pk.y,
+            breathStrength: smoothstep(0.8, 4.5, pk.y),
+          });
+        }
       }
     }
+
+    // Lock in the 8 final peaks by candidate letter index
+    // Z=25, T=19, F=5, A=0, E=4, H=7, P=15, X=23
+    const FINAL_CANDIDATE_INDICES = [25, 19, 5, 0, 4, 7, 15, 23];
+    const finalPeaks = FINAL_CANDIDATE_INDICES
+      .filter((i) => i < selectedPeaks.length)
+      .map((i) => selectedPeaks[i]);
 
     // Wireframe
     const wfGeo = new THREE.WireframeGeometry(geo);
@@ -256,7 +269,7 @@ export default function Mountain({ mouseRef }: MountainProps) {
     }
     wfGeo.setAttribute("color", new THREE.BufferAttribute(colors, 3));
 
-    return { solidGeo: geo, wfGeo, peaks: selectedPeaks };
+    return { solidGeo: geo, wfGeo, peaks: finalPeaks };
   }, []);
 
   useFrame(({ camera, clock }) => {
@@ -301,7 +314,7 @@ export default function Mountain({ mouseRef }: MountainProps) {
         if (s === 0) continue;
         const bx = basePos[i * 3];
         const bz = basePos[i * 3 + 2];
-        const breath = Math.sin(t * 0.6 + bx * 0.4 + bz * 0.3) * 0.18 * s;
+        const breath = Math.sin(t * breathingSpeed + bx * 0.4 + bz * 0.3) * 0.18 * s;
         const slowSwell = Math.sin(t * 0.25) * 0.06 * s;
         arr[i * 3 + 1] = basePos[i * 3 + 1] + breath + slowSwell;
       }
@@ -319,7 +332,7 @@ export default function Mountain({ mouseRef }: MountainProps) {
         if (s === 0) continue;
         const bx = baseWfPos[i * 3];
         const bz = baseWfPos[i * 3 + 2];
-        const breath = Math.sin(t * 0.6 + bx * 0.4 + bz * 0.3) * 0.18 * s;
+        const breath = Math.sin(t * breathingSpeed + bx * 0.4 + bz * 0.3) * 0.18 * s;
         const slowSwell = Math.sin(t * 0.25) * 0.06 * s;
         arr[i * 3 + 1] = baseWfPos[i * 3 + 1] + breath + slowSwell;
       }
@@ -351,7 +364,13 @@ export default function Mountain({ mouseRef }: MountainProps) {
           depthWrite={false}
         />
       </lineSegments>
-      <PeakLabels peaks={peaks} cursorLocalPosRef={cursorLocalPosRef} />
+      <PeakLabels
+        peaks={peaks}
+        groupRef={groupRef}
+        mouseRef={mouseRef}
+        cursorLocalPosRef={cursorLocalPosRef}
+        breathingSpeed={breathingSpeed}
+      />
     </group>
   );
 }

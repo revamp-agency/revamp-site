@@ -1,8 +1,8 @@
 "use client";
 
-import { useRef, useState, useMemo } from "react";
+import { useRef, useState } from "react";
 import { useFrame } from "@react-three/fiber";
-import { Html } from "@react-three/drei";
+import { Html, Line } from "@react-three/drei";
 import * as THREE from "three";
 import { AnimatePresence, motion } from "framer-motion";
 import type { Peak } from "./Mountain";
@@ -18,61 +18,82 @@ const SERVICES = [
   "SEO",
 ];
 
-const THRESHOLD = 0.7;
-const PROXIMITY_RANGE = 2.5;
+// 2D screen-space thresholds (normalized 0–10 scale)
+const SERVICE_THRESHOLD = 0.7;
+const CONNECTION_RANGE = 2.5;
+const CONNECTION_LINE_WIDTH = 3.5;
+const CONNECTION_OPACITY = 0.25;
+
+function breathingY(peak: Peak, t: number, breathingSpeed: number): number {
+  const s = peak.breathStrength;
+  const breath =
+    Math.sin(t * breathingSpeed + peak.basePosition.x * 0.4 + peak.basePosition.z * 0.3) *
+    0.18 *
+    s;
+  const slowSwell = Math.sin(t * 0.25) * 0.06 * s;
+  return peak.basePosition.y + breath + slowSwell;
+}
+
+// ── Individual peak label ──
+
+const _labelProjVec = new THREE.Vector3();
 
 interface PeakLabelProps {
   peak: Peak;
   index: number;
-  cursorLocalPosRef: React.RefObject<THREE.Vector3>;
+  groupRef: React.RefObject<THREE.Group | null>;
+  mouseRef: React.RefObject<{ x: number; y: number } | null>;
+  breathingSpeed: number;
 }
 
-function PeakLabel({ peak, index, cursorLocalPosRef }: PeakLabelProps) {
-  const groupRef = useRef<THREE.Group>(null);
+function PeakLabel({ peak, index, groupRef, mouseRef, breathingSpeed }: PeakLabelProps) {
+  const labelGroupRef = useRef<THREE.Group>(null);
   const textRef = useRef<HTMLSpanElement>(null);
   const [isClose, setIsClose] = useState(false);
   const prevIsCloseRef = useRef(false);
 
-  useFrame(({ clock }) => {
-    // Breathing offset — same formula as Mountain so label stays glued
+  useFrame(({ camera, size, clock }) => {
     const t = clock.getElapsedTime();
-    const s = peak.breathStrength;
-    const breath =
-      Math.sin(t * 0.6 + peak.basePosition.x * 0.4 + peak.basePosition.z * 0.3) *
-      0.18 *
-      s;
-    const slowSwell = Math.sin(t * 0.25) * 0.06 * s;
-    const currentY = peak.basePosition.y + breath + slowSwell;
+    const currentY = breathingY(peak, t, breathingSpeed);
 
-    if (groupRef.current) {
-      groupRef.current.position.set(
+    if (labelGroupRef.current) {
+      labelGroupRef.current.position.set(
         peak.basePosition.x,
         currentY,
         peak.basePosition.z
       );
     }
 
-    // Full 3D distance in group-local space
-    if (cursorLocalPosRef.current) {
-      const dx = peak.basePosition.x - cursorLocalPosRef.current.x;
-      const dy = currentY - cursorLocalPosRef.current.y;
-      const dz = peak.basePosition.z - cursorLocalPosRef.current.z;
-      const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
+    if (!mouseRef.current || !groupRef.current) return;
 
-      const close = dist <= THRESHOLD;
-      if (close !== prevIsCloseRef.current) {
-        prevIsCloseRef.current = close;
-        setIsClose(close);
-      }
+    // Cursor pixel position (mouseRef is normalized -1 to +1)
+    const cursorPx = (mouseRef.current.x + 1) / 2 * size.width;
+    const cursorPy = (mouseRef.current.y + 1) / 2 * size.height;
 
-      if (!close && textRef.current) {
-        textRef.current.textContent = dist.toFixed(2) + "m";
-      }
+    // Peak local → world → screen
+    _labelProjVec.set(peak.basePosition.x, currentY, peak.basePosition.z);
+    groupRef.current.localToWorld(_labelProjVec);
+    _labelProjVec.project(camera);
+    const peakPx = (_labelProjVec.x + 1) / 2 * size.width;
+    const peakPy = (1 - _labelProjVec.y) / 2 * size.height;
+
+    // 2D screen distance in normalized 0–10 scale
+    const dist2dPx = Math.hypot(cursorPx - peakPx, cursorPy - peakPy);
+    const dist2d = dist2dPx / size.width * 10;
+
+    const close = dist2d <= SERVICE_THRESHOLD;
+    if (close !== prevIsCloseRef.current) {
+      prevIsCloseRef.current = close;
+      setIsClose(close);
+    }
+
+    if (!close && textRef.current) {
+      textRef.current.textContent = dist2d.toFixed(2) + "m";
     }
   });
 
   return (
-    <group ref={groupRef}>
+    <group ref={labelGroupRef}>
       <Html
         center
         distanceFactor={8}
@@ -124,70 +145,121 @@ function PeakLabel({ peak, index, cursorLocalPosRef }: PeakLabelProps) {
   );
 }
 
+// ── Connection lines (2D screen-space distance) ──
+
+interface ActiveLine {
+  peakIdx: number;
+  from: [number, number, number];
+  to: [number, number, number];
+  opacity: number;
+}
+
+const _projVec = new THREE.Vector3();
+
+interface ConnectionLinesProps {
+  peaks: Peak[];
+  groupRef: React.RefObject<THREE.Group | null>;
+  mouseRef: React.RefObject<{ x: number; y: number } | null>;
+  cursorLocalPosRef: React.RefObject<THREE.Vector3 | null>;
+  breathingSpeed: number;
+}
+
 function ConnectionLines({
   peaks,
+  groupRef,
+  mouseRef,
   cursorLocalPosRef,
-}: {
-  peaks: Peak[];
-  cursorLocalPosRef: React.RefObject<THREE.Vector3>;
-}) {
-  const geometry = useMemo(() => {
-    const geo = new THREE.BufferGeometry();
-    const positions = new Float32Array(peaks.length * 6);
-    geo.setAttribute("position", new THREE.BufferAttribute(positions, 3));
-    geo.setDrawRange(0, 0);
-    return geo;
-  }, [peaks.length]);
+  breathingSpeed,
+}: ConnectionLinesProps) {
+  const [lines, setLines] = useState<ActiveLine[]>([]);
+  const prevKeysRef = useRef("");
 
-  useFrame(({ clock }) => {
-    if (!cursorLocalPosRef.current) return;
+  useFrame(({ camera, size, clock }) => {
+    if (!mouseRef.current || !groupRef.current || !cursorLocalPosRef.current) return;
+
     const t = clock.getElapsedTime();
-    const positions = geometry.attributes.position.array as Float32Array;
-    let lineCount = 0;
 
-    for (const peak of peaks) {
-      const s = peak.breathStrength;
-      const breath =
-        Math.sin(t * 0.6 + peak.basePosition.x * 0.4 + peak.basePosition.z * 0.3) *
-        0.18 *
-        s;
-      const slowSwell = Math.sin(t * 0.25) * 0.06 * s;
-      const currentY = peak.basePosition.y + breath + slowSwell;
+    // Cursor pixel position (mouseRef is normalized -1 to +1)
+    const cursorPx = (mouseRef.current.x + 1) / 2 * size.width;
+    const cursorPy = (mouseRef.current.y + 1) / 2 * size.height;
 
-      const dx = peak.basePosition.x - cursorLocalPosRef.current.x;
-      const dy = currentY - cursorLocalPosRef.current.y;
-      const dz = peak.basePosition.z - cursorLocalPosRef.current.z;
-      const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
+    const newLines: ActiveLine[] = [];
 
-      if (dist < PROXIMITY_RANGE) {
-        const base = lineCount * 6;
-        positions[base] = cursorLocalPosRef.current.x;
-        positions[base + 1] = cursorLocalPosRef.current.y;
-        positions[base + 2] = cursorLocalPosRef.current.z;
-        positions[base + 3] = peak.basePosition.x;
-        positions[base + 4] = currentY;
-        positions[base + 5] = peak.basePosition.z;
-        lineCount++;
+    for (let i = 0; i < peaks.length; i++) {
+      const peak = peaks[i];
+      const currentY = breathingY(peak, t, breathingSpeed);
+
+      // Peak local → world (apply group transform)
+      _projVec.set(peak.basePosition.x, currentY, peak.basePosition.z);
+      groupRef.current.localToWorld(_projVec);
+
+      // Project peak to screen pixels
+      _projVec.project(camera);
+      const peakPx = (_projVec.x + 1) / 2 * size.width;
+      const peakPy = (1 - _projVec.y) / 2 * size.height;
+
+      // 2D screen distance in normalized 0–10 scale
+      const dist2dPx = Math.hypot(cursorPx - peakPx, cursorPy - peakPy);
+      const dist2d = dist2dPx / size.width * 10;
+
+      if (dist2d < CONNECTION_RANGE) {
+        const fadedOpacity = CONNECTION_OPACITY * (1 - dist2d / CONNECTION_RANGE);
+        newLines.push({
+          peakIdx: i,
+          from: [
+            cursorLocalPosRef.current.x,
+            cursorLocalPosRef.current.y,
+            cursorLocalPosRef.current.z,
+          ],
+          to: [peak.basePosition.x, currentY, peak.basePosition.z],
+          opacity: fadedOpacity,
+        });
       }
     }
 
-    geometry.setDrawRange(0, lineCount * 2);
-    (geometry.attributes.position as THREE.BufferAttribute).needsUpdate = true;
+    // Only trigger re-render when the set of visible lines changes
+    const newKeys = newLines.map((l) => l.peakIdx).join(",");
+    if (newKeys !== prevKeysRef.current) {
+      prevKeysRef.current = newKeys;
+      setLines(newLines);
+    } else if (newLines.length > 0) {
+      setLines(newLines);
+    }
   });
 
   return (
-    <lineSegments geometry={geometry} renderOrder={2}>
-      <lineBasicMaterial color="#F59E0B" transparent opacity={0.25} />
-    </lineSegments>
+    <>
+      {lines.map((line) => (
+        <Line
+          key={line.peakIdx}
+          points={[line.from, line.to]}
+          color="#F59E0B"
+          lineWidth={CONNECTION_LINE_WIDTH}
+          transparent
+          opacity={line.opacity}
+        />
+      ))}
+    </>
   );
 }
 
+// ── Main export ──
+
 interface PeakLabelsProps {
   peaks: Peak[];
-  cursorLocalPosRef: React.RefObject<THREE.Vector3>;
+  groupRef: React.RefObject<THREE.Group | null>;
+  mouseRef: React.RefObject<{ x: number; y: number } | null>;
+  cursorLocalPosRef: React.RefObject<THREE.Vector3 | null>;
+  breathingSpeed: number;
 }
 
-export default function PeakLabels({ peaks, cursorLocalPosRef }: PeakLabelsProps) {
+export default function PeakLabels({
+  peaks,
+  groupRef,
+  mouseRef,
+  cursorLocalPosRef,
+  breathingSpeed,
+}: PeakLabelsProps) {
   if (peaks.length === 0) return null;
 
   return (
@@ -197,10 +269,18 @@ export default function PeakLabels({ peaks, cursorLocalPosRef }: PeakLabelsProps
           key={i}
           peak={peak}
           index={i}
-          cursorLocalPosRef={cursorLocalPosRef}
+          groupRef={groupRef}
+          mouseRef={mouseRef}
+          breathingSpeed={breathingSpeed}
         />
       ))}
-      <ConnectionLines peaks={peaks} cursorLocalPosRef={cursorLocalPosRef} />
+      <ConnectionLines
+        peaks={peaks}
+        groupRef={groupRef}
+        mouseRef={mouseRef}
+        cursorLocalPosRef={cursorLocalPosRef}
+        breathingSpeed={breathingSpeed}
+      />
     </>
   );
 }
