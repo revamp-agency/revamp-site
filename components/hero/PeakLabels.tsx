@@ -21,7 +21,7 @@ const SERVICES = [
 // 2D screen-space thresholds (normalized 0–10 scale)
 const SERVICE_THRESHOLD = 0.7;
 const CONNECTION_RANGE = 2.5;
-const CONNECTION_LINE_WIDTH = 1;
+const CONNECTION_LINE_WIDTH = 2;
 const CONNECTION_OPACITY = 0.25;
 
 // ── Individual peak label ──

@@ -230,22 +230,8 @@ export default function Mountain({ mouseRef }: MountainProps) {
     }
 
     // Lock in the 8 final peaks by candidate letter index
-    // Z=25, T=19, F=5, A=0, E=4, K/M/R=10/12/17, P=15, X=23
-    // Pick K(10), fallback M(12), fallback R(17) — must be ≥1.5 xz from E(4)
-    const ePeak = selectedPeaks[4];
-    let prenotazioniIdx = 10; // K
-    for (const fallback of [10, 12, 17]) {
-      if (fallback < selectedPeaks.length && ePeak) {
-        const dx = selectedPeaks[fallback].basePosition.x - ePeak.basePosition.x;
-        const dz = selectedPeaks[fallback].basePosition.z - ePeak.basePosition.z;
-        if (Math.sqrt(dx * dx + dz * dz) >= 1.5) {
-          prenotazioniIdx = fallback;
-          break;
-        }
-      }
-    }
-
-    const FINAL_CANDIDATE_INDICES = [25, 19, 5, 0, 4, prenotazioniIdx, 15, 23];
+    // Z=25, T=19, F=5, A=0, E=4, H=7, P=15, X=23
+    const FINAL_CANDIDATE_INDICES = [25, 19, 5, 0, 4, 7, 15, 23];
     const finalPeaks = FINAL_CANDIDATE_INDICES
       .filter((i) => i < selectedPeaks.length)
       .map((i) => selectedPeaks[i]);
