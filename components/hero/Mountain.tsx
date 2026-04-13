@@ -5,7 +5,6 @@ import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { createNoise2D } from "simplex-noise";
 import alea from "alea";
-import { useControls, folder } from "leva";
 import PeakLabels from "./PeakLabels";
 
 const SEED = "c";
@@ -62,11 +61,7 @@ interface MountainProps {
 }
 
 export default function Mountain({ mouseRef }: MountainProps) {
-  const { breathingSpeed } = useControls({
-    Breathing: folder({
-      breathingSpeed: { value: 0.25, min: 0.05, max: 1.0, step: 0.05 },
-    }),
-  });
+  const breathingSpeed = 0.25;
 
   const groupRef = useRef<THREE.Group>(null);
   const basePositionsRef = useRef<Float32Array | null>(null);
