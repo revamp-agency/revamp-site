@@ -22,7 +22,7 @@ const SERVICES = [
 const SERVICE_THRESHOLD = 0.7;
 const CONNECTION_RANGE = 2.5;
 const CONNECTION_LINE_WIDTH = 2;
-const CONNECTION_OPACITY = 0.25;
+const CONNECTION_OPACITY = 1.0;
 
 // ── Individual peak label ──
 
@@ -132,13 +132,13 @@ interface ActiveLine {
 }
 
 const _projVec = new THREE.Vector3();
+const _cursorWorld = new THREE.Vector3();
 
 interface ConnectionLinesProps {
   peaks: Peak[];
   solidGeo: THREE.BufferGeometry;
   groupRef: React.RefObject<THREE.Group | null>;
   mouseRef: React.RefObject<{ x: number; y: number } | null>;
-  cursorLocalPosRef: React.RefObject<THREE.Vector3 | null>;
 }
 
 function ConnectionLines({
@@ -146,13 +146,27 @@ function ConnectionLines({
   solidGeo,
   groupRef,
   mouseRef,
-  cursorLocalPosRef,
 }: ConnectionLinesProps) {
   const [lines, setLines] = useState<ActiveLine[]>([]);
   const prevKeysRef = useRef("");
 
   useFrame(({ camera, size }) => {
-    if (!mouseRef.current || !groupRef.current || !cursorLocalPosRef.current) return;
+    if (!mouseRef.current || !groupRef.current) return;
+
+    // Unproject with Y negated (mouseRef uses screen convention,
+    // Three.js NDC expects +1 at top)
+    _cursorWorld.set(mouseRef.current.x, -mouseRef.current.y, 0.5);
+    _cursorWorld.unproject(camera);
+    // Ray direction: from camera to unprojected point (use separate vec)
+    const _rayDir = _cursorWorld.clone().sub(camera.position).normalize();
+    const _targetZ = 3.0;
+    const _t = (_targetZ - camera.position.z) / _rayDir.z;
+    const cursorWorld = new THREE.Vector3(
+      camera.position.x + _rayDir.x * _t,
+      camera.position.y + _rayDir.y * _t,
+      _targetZ
+    );
+    const cursorLocal = groupRef.current.worldToLocal(cursorWorld.clone());
 
     // Cursor pixel position (mouseRef is normalized -1 to +1)
     const cursorPx = (mouseRef.current.x + 1) / 2 * size.width;
@@ -182,11 +196,7 @@ function ConnectionLines({
         const fadedOpacity = CONNECTION_OPACITY * (1 - dist2d / CONNECTION_RANGE);
         newLines.push({
           peakIdx: i,
-          from: [
-            cursorLocalPosRef.current.x,
-            cursorLocalPosRef.current.y,
-            cursorLocalPosRef.current.z,
-          ],
+          from: [cursorLocal.x, cursorLocal.y, cursorLocal.z],
           to: [peak.basePosition.x, liveY, peak.basePosition.z],
           opacity: fadedOpacity,
         });
@@ -213,6 +223,8 @@ function ConnectionLines({
           lineWidth={CONNECTION_LINE_WIDTH}
           transparent
           opacity={line.opacity}
+          depthTest={false}
+          depthWrite={false}
         />
       ))}
     </>
@@ -293,7 +305,7 @@ export default function PeakLabels({
   solidGeo,
   groupRef,
   mouseRef,
-  cursorLocalPosRef,
+  cursorLocalPosRef: _cursorLocalPosRef,
 }: PeakLabelsProps) {
   const activePeakIndex = useActivePeak(peaks, solidGeo, groupRef, mouseRef);
 
@@ -317,7 +329,6 @@ export default function PeakLabels({
         solidGeo={solidGeo}
         groupRef={groupRef}
         mouseRef={mouseRef}
-        cursorLocalPosRef={cursorLocalPosRef}
       />
     </>
   );
