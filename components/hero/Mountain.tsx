@@ -68,8 +68,6 @@ export default function Mountain({ mouseRef }: MountainProps) {
   const breathStrengthRef = useRef<Float32Array | null>(null);
   const baseWfPositionsRef = useRef<Float32Array | null>(null);
   const wfBreathStrengthRef = useRef<Float32Array | null>(null);
-  const solidGeoRef = useRef<THREE.BufferGeometry | null>(null);
-  const wfGeoRef = useRef<THREE.BufferGeometry | null>(null);
   const cursorLocalPosRef = useRef(new THREE.Vector3());
 
   const { solidGeo, wfGeo, peaks } = useMemo(() => {
@@ -170,7 +168,6 @@ export default function Mountain({ mouseRef }: MountainProps) {
     }
     basePositionsRef.current = basePos;
     breathStrengthRef.current = bStrength;
-    solidGeoRef.current = geo;
 
     // Peak detection — all local maxima in front 2/3 of the plane
     const FRONT_CUTOFF_Z = -2.67; // back 1/3 cutoff: -8 + 16/3 ≈ -2.67
@@ -248,7 +245,6 @@ export default function Mountain({ mouseRef }: MountainProps) {
     }
     baseWfPositionsRef.current = baseWfPos;
     wfBreathStrengthRef.current = wfBStrength;
-    wfGeoRef.current = wfGeo;
 
     // Vertex colors
     const colors = new Float32Array(wfPos.count * 3);
@@ -301,9 +297,8 @@ export default function Mountain({ mouseRef }: MountainProps) {
     const t = clock.getElapsedTime();
     const basePos = basePositionsRef.current;
     const bStr = breathStrengthRef.current;
-    const sGeo = solidGeoRef.current;
-    if (basePos && bStr && sGeo) {
-      const arr = sGeo.attributes.position.array as Float32Array;
+    if (basePos && bStr && solidGeo.attributes.position) {
+      const arr = solidGeo.attributes.position.array as Float32Array;
       for (let i = 0; i < bStr.length; i++) {
         const s = bStr[i];
         if (s === 0) continue;
@@ -313,15 +308,14 @@ export default function Mountain({ mouseRef }: MountainProps) {
         const slowSwell = Math.sin(t * 0.25) * 0.06 * s;
         arr[i * 3 + 1] = basePos[i * 3 + 1] + breath + slowSwell;
       }
-      sGeo.attributes.position.needsUpdate = true;
+      solidGeo.attributes.position.needsUpdate = true;
     }
 
     // Breathing — wireframe geometry
     const baseWfPos = baseWfPositionsRef.current;
     const wfBStr = wfBreathStrengthRef.current;
-    const wGeo = wfGeoRef.current;
-    if (baseWfPos && wfBStr && wGeo) {
-      const arr = wGeo.attributes.position.array as Float32Array;
+    if (baseWfPos && wfBStr && wfGeo.attributes.position) {
+      const arr = wfGeo.attributes.position.array as Float32Array;
       for (let i = 0; i < wfBStr.length; i++) {
         const s = wfBStr[i];
         if (s === 0) continue;
@@ -331,7 +325,7 @@ export default function Mountain({ mouseRef }: MountainProps) {
         const slowSwell = Math.sin(t * 0.25) * 0.06 * s;
         arr[i * 3 + 1] = baseWfPos[i * 3 + 1] + breath + slowSwell;
       }
-      wGeo.attributes.position.needsUpdate = true;
+      wfGeo.attributes.position.needsUpdate = true;
     }
   });
 
@@ -361,6 +355,7 @@ export default function Mountain({ mouseRef }: MountainProps) {
       </lineSegments>
       <PeakLabels
         peaks={peaks}
+        solidGeo={solidGeo}
         groupRef={groupRef}
         mouseRef={mouseRef}
         cursorLocalPosRef={cursorLocalPosRef}

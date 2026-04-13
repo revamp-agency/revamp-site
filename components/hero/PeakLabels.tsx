@@ -32,22 +32,32 @@ interface PeakLabelProps {
   peak: Peak;
   index: number;
   isActive: boolean;
+  solidGeo: THREE.BufferGeometry;
   groupRef: React.RefObject<THREE.Group | null>;
   mouseRef: React.RefObject<{ x: number; y: number } | null>;
 }
 
-function PeakLabel({ peak, index, isActive, groupRef, mouseRef }: PeakLabelProps) {
+function PeakLabel({ peak, index, isActive, solidGeo, groupRef, mouseRef }: PeakLabelProps) {
   const textRef = useRef<HTMLSpanElement>(null);
+  const labelGroupRef = useRef<THREE.Group>(null);
 
   useFrame(({ camera, size }) => {
-    if (!mouseRef.current || !groupRef.current) return;
+    if (!groupRef.current) return;
+
+    // Track live vertex Y so label sticks to breathing peak
+    if (labelGroupRef.current) {
+      const posArr = solidGeo.attributes.position.array as Float32Array;
+      labelGroupRef.current.position.y = posArr[peak.index * 3 + 1];
+    }
 
     // Update distance text when not active
-    if (!isActive && textRef.current) {
+    if (!isActive && textRef.current && mouseRef.current) {
       const cursorPx = (mouseRef.current.x + 1) / 2 * size.width;
       const cursorPy = (mouseRef.current.y + 1) / 2 * size.height;
 
-      _labelProjVec.set(peak.basePosition.x, peak.basePosition.y, peak.basePosition.z);
+      const posArr = solidGeo.attributes.position.array as Float32Array;
+      const liveY = posArr[peak.index * 3 + 1];
+      _labelProjVec.set(peak.basePosition.x, liveY, peak.basePosition.z);
       groupRef.current.localToWorld(_labelProjVec);
       _labelProjVec.project(camera);
       const peakPx = (_labelProjVec.x + 1) / 2 * size.width;
@@ -60,7 +70,7 @@ function PeakLabel({ peak, index, isActive, groupRef, mouseRef }: PeakLabelProps
   });
 
   return (
-    <group position={[peak.basePosition.x, peak.basePosition.y, peak.basePosition.z]}>
+    <group ref={labelGroupRef} position={[peak.basePosition.x, peak.basePosition.y, peak.basePosition.z]}>
       <Html
         center
         distanceFactor={8}
@@ -125,6 +135,7 @@ const _projVec = new THREE.Vector3();
 
 interface ConnectionLinesProps {
   peaks: Peak[];
+  solidGeo: THREE.BufferGeometry;
   groupRef: React.RefObject<THREE.Group | null>;
   mouseRef: React.RefObject<{ x: number; y: number } | null>;
   cursorLocalPosRef: React.RefObject<THREE.Vector3 | null>;
@@ -132,6 +143,7 @@ interface ConnectionLinesProps {
 
 function ConnectionLines({
   peaks,
+  solidGeo,
   groupRef,
   mouseRef,
   cursorLocalPosRef,
@@ -145,14 +157,16 @@ function ConnectionLines({
     // Cursor pixel position (mouseRef is normalized -1 to +1)
     const cursorPx = (mouseRef.current.x + 1) / 2 * size.width;
     const cursorPy = (mouseRef.current.y + 1) / 2 * size.height;
+    const posArr = solidGeo.attributes.position.array as Float32Array;
 
     const newLines: ActiveLine[] = [];
 
     for (let i = 0; i < peaks.length; i++) {
       const peak = peaks[i];
+      const liveY = posArr[peak.index * 3 + 1];
 
-      // Peak at rest position → world (apply group transform)
-      _projVec.set(peak.basePosition.x, peak.basePosition.y, peak.basePosition.z);
+      // Peak at live position → world (apply group transform)
+      _projVec.set(peak.basePosition.x, liveY, peak.basePosition.z);
       groupRef.current.localToWorld(_projVec);
 
       // Project peak to screen pixels
@@ -173,7 +187,7 @@ function ConnectionLines({
             cursorLocalPosRef.current.y,
             cursorLocalPosRef.current.z,
           ],
-          to: [peak.basePosition.x, peak.basePosition.y, peak.basePosition.z],
+          to: [peak.basePosition.x, liveY, peak.basePosition.z],
           opacity: fadedOpacity,
         });
       }
@@ -211,6 +225,7 @@ const _activeProjVec = new THREE.Vector3();
 
 function useActivePeak(
   peaks: Peak[],
+  solidGeo: THREE.BufferGeometry,
   groupRef: React.RefObject<THREE.Group | null>,
   mouseRef: React.RefObject<{ x: number; y: number } | null>,
 ): number {
@@ -228,14 +243,16 @@ function useActivePeak(
 
     const cursorPx = (mouseRef.current.x + 1) / 2 * size.width;
     const cursorPy = (mouseRef.current.y + 1) / 2 * size.height;
+    const posArr = solidGeo.attributes.position.array as Float32Array;
 
     let minDist = Infinity;
     let minIdx = -1;
 
     for (let i = 0; i < peaks.length; i++) {
+      const liveY = posArr[peaks[i].index * 3 + 1];
       _activeProjVec.set(
         peaks[i].basePosition.x,
-        peaks[i].basePosition.y,
+        liveY,
         peaks[i].basePosition.z,
       );
       groupRef.current.localToWorld(_activeProjVec);
@@ -265,6 +282,7 @@ function useActivePeak(
 
 interface PeakLabelsProps {
   peaks: Peak[];
+  solidGeo: THREE.BufferGeometry;
   groupRef: React.RefObject<THREE.Group | null>;
   mouseRef: React.RefObject<{ x: number; y: number } | null>;
   cursorLocalPosRef: React.RefObject<THREE.Vector3 | null>;
@@ -272,11 +290,12 @@ interface PeakLabelsProps {
 
 export default function PeakLabels({
   peaks,
+  solidGeo,
   groupRef,
   mouseRef,
   cursorLocalPosRef,
 }: PeakLabelsProps) {
-  const activePeakIndex = useActivePeak(peaks, groupRef, mouseRef);
+  const activePeakIndex = useActivePeak(peaks, solidGeo, groupRef, mouseRef);
 
   if (peaks.length === 0) return null;
 
@@ -288,12 +307,14 @@ export default function PeakLabels({
           peak={peak}
           index={i}
           isActive={activePeakIndex === i}
+          solidGeo={solidGeo}
           groupRef={groupRef}
           mouseRef={mouseRef}
         />
       ))}
       <ConnectionLines
         peaks={peaks}
+        solidGeo={solidGeo}
         groupRef={groupRef}
         mouseRef={mouseRef}
         cursorLocalPosRef={cursorLocalPosRef}
