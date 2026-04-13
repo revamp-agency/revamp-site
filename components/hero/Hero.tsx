@@ -4,6 +4,7 @@ import { useRef, useEffect } from "react";
 import { Canvas } from "@react-three/fiber";
 import { PerspectiveCamera } from "@react-three/drei";
 import dynamic from "next/dynamic";
+import OrangeOrb from "./OrangeOrb";
 
 const Mountain = dynamic(() => import("./Mountain"), { ssr: false });
 
@@ -21,11 +22,12 @@ export default function Hero() {
 
   return (
     <section className="relative w-full h-screen overflow-hidden bg-black">
+      <OrangeOrb />
       <div className="absolute inset-0">
         <Canvas
           dpr={[1, 2]}
-          gl={{ antialias: true, alpha: false }}
-          style={{ background: "#000000" }}
+          gl={{ alpha: true, antialias: true }}
+          style={{ background: "transparent" }}
         >
           <PerspectiveCamera
             makeDefault
