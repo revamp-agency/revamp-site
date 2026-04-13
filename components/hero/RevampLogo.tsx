@@ -13,12 +13,10 @@ export default function RevampLogo() {
   const lenis = useLenis();
 
   const scrollY = useMotionValue(0);
-  const [baseSize, setBaseSize] = useState(80);
   const [scrollRange, setScrollRange] = useState(400);
 
   useEffect(() => {
     const update = () => {
-      setBaseSize(Math.max(64, Math.min(window.innerWidth * 0.07, 96)));
       setScrollRange(window.innerHeight * 0.5);
     };
     update();
@@ -35,7 +33,7 @@ export default function RevampLogo() {
     };
   }, [lenis, scrollY]);
 
-  const fontSize = useTransform(scrollY, [0, scrollRange], [baseSize, 22]);
+  const fontSize = useTransform(scrollY, [0, scrollRange], [110, 40]);
   const subtitleOpacity = useTransform(scrollY, [0, scrollRange * 0.3], [1, 0]);
   const subtitleMaxHeight = useTransform(
     scrollY,

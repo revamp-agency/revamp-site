@@ -235,16 +235,9 @@ html.lenis body {
 }
 
 @keyframes orb-pulse {
-  0%, 100% {
-    transform: scale(1);
-    opacity: 0.55;
-  }
-  50% {
-    transform: scale(1.18);
-    opacity: 0.75;
-  }
+  0%, 100% { transform: scale(1); opacity: 0.55; }
+  50% { transform: scale(1.00); opacity: 0.75; }
 }
-
 
 @layer base {
   * {
