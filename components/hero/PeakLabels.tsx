@@ -31,40 +31,30 @@ const _labelProjVec = new THREE.Vector3();
 interface PeakLabelProps {
   peak: Peak;
   index: number;
+  isActive: boolean;
   groupRef: React.RefObject<THREE.Group | null>;
   mouseRef: React.RefObject<{ x: number; y: number } | null>;
 }
 
-function PeakLabel({ peak, index, groupRef, mouseRef }: PeakLabelProps) {
+function PeakLabel({ peak, index, isActive, groupRef, mouseRef }: PeakLabelProps) {
   const textRef = useRef<HTMLSpanElement>(null);
-  const [isClose, setIsClose] = useState(false);
-  const prevIsCloseRef = useRef(false);
 
   useFrame(({ camera, size }) => {
     if (!mouseRef.current || !groupRef.current) return;
 
-    // Cursor pixel position (mouseRef is normalized -1 to +1)
-    const cursorPx = (mouseRef.current.x + 1) / 2 * size.width;
-    const cursorPy = (mouseRef.current.y + 1) / 2 * size.height;
+    // Update distance text when not active
+    if (!isActive && textRef.current) {
+      const cursorPx = (mouseRef.current.x + 1) / 2 * size.width;
+      const cursorPy = (mouseRef.current.y + 1) / 2 * size.height;
 
-    // Peak at rest position → world → screen
-    _labelProjVec.set(peak.basePosition.x, peak.basePosition.y, peak.basePosition.z);
-    groupRef.current.localToWorld(_labelProjVec);
-    _labelProjVec.project(camera);
-    const peakPx = (_labelProjVec.x + 1) / 2 * size.width;
-    const peakPy = (1 - _labelProjVec.y) / 2 * size.height;
+      _labelProjVec.set(peak.basePosition.x, peak.basePosition.y, peak.basePosition.z);
+      groupRef.current.localToWorld(_labelProjVec);
+      _labelProjVec.project(camera);
+      const peakPx = (_labelProjVec.x + 1) / 2 * size.width;
+      const peakPy = (1 - _labelProjVec.y) / 2 * size.height;
 
-    // 2D screen distance in normalized 0–10 scale
-    const dist2dPx = Math.hypot(cursorPx - peakPx, cursorPy - peakPy);
-    const dist2d = dist2dPx / size.width * 10;
-
-    const close = dist2d <= SERVICE_THRESHOLD;
-    if (close !== prevIsCloseRef.current) {
-      prevIsCloseRef.current = close;
-      setIsClose(close);
-    }
-
-    if (!close && textRef.current) {
+      const dist2dPx = Math.hypot(cursorPx - peakPx, cursorPy - peakPy);
+      const dist2d = dist2dPx / size.width * 10;
       textRef.current.textContent = dist2d.toFixed(2) + "m";
     }
   });
@@ -82,7 +72,7 @@ function PeakLabel({ peak, index, groupRef, mouseRef }: PeakLabelProps) {
         >
           <div className="mb-1">
             <AnimatePresence mode="wait">
-              {isClose ? (
+              {isActive ? (
                 <motion.div
                   key="service"
                   initial={{ opacity: 0 }}
@@ -215,6 +205,62 @@ function ConnectionLines({
   );
 }
 
+// ── Active peak tracker (single useFrame for all peaks) ──
+
+const _activeProjVec = new THREE.Vector3();
+
+function useActivePeak(
+  peaks: Peak[],
+  groupRef: React.RefObject<THREE.Group | null>,
+  mouseRef: React.RefObject<{ x: number; y: number } | null>,
+): number {
+  const [activePeakIndex, setActivePeakIndex] = useState(-1);
+  const activePeakRef = useRef(-1);
+
+  useFrame(({ camera, size }) => {
+    if (!mouseRef.current || !groupRef.current) {
+      if (activePeakRef.current !== -1) {
+        activePeakRef.current = -1;
+        setActivePeakIndex(-1);
+      }
+      return;
+    }
+
+    const cursorPx = (mouseRef.current.x + 1) / 2 * size.width;
+    const cursorPy = (mouseRef.current.y + 1) / 2 * size.height;
+
+    let minDist = Infinity;
+    let minIdx = -1;
+
+    for (let i = 0; i < peaks.length; i++) {
+      _activeProjVec.set(
+        peaks[i].basePosition.x,
+        peaks[i].basePosition.y,
+        peaks[i].basePosition.z,
+      );
+      groupRef.current.localToWorld(_activeProjVec);
+      _activeProjVec.project(camera);
+      const peakPx = (_activeProjVec.x + 1) / 2 * size.width;
+      const peakPy = (1 - _activeProjVec.y) / 2 * size.height;
+      const dist2dPx = Math.hypot(cursorPx - peakPx, cursorPy - peakPy);
+      const dist2d = dist2dPx / size.width * 10;
+
+      if (dist2d < minDist) {
+        minDist = dist2d;
+        minIdx = i;
+      }
+    }
+
+    const newActive = minDist <= SERVICE_THRESHOLD ? minIdx : -1;
+    if (newActive !== activePeakRef.current) {
+      activePeakRef.current = newActive;
+      setActivePeakIndex(newActive);
+    }
+  });
+
+  return activePeakIndex;
+}
+
 // ── Main export ──
 
 interface PeakLabelsProps {
@@ -230,6 +276,8 @@ export default function PeakLabels({
   mouseRef,
   cursorLocalPosRef,
 }: PeakLabelsProps) {
+  const activePeakIndex = useActivePeak(peaks, groupRef, mouseRef);
+
   if (peaks.length === 0) return null;
 
   return (
@@ -239,6 +287,7 @@ export default function PeakLabels({
           key={i}
           peak={peak}
           index={i}
+          isActive={activePeakIndex === i}
           groupRef={groupRef}
           mouseRef={mouseRef}
         />
