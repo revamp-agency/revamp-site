@@ -24,7 +24,8 @@ export default function TopNav() {
   const lenis = useLenis();
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
-  const [expanded, setExpanded] = useState(false);
+  const [scrollExpanded, setScrollExpanded] = useState(false);
+  const [hoverExpanded, setHoverExpanded] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeKey, setActiveKey] = useState<string | null>(null);
 
@@ -41,7 +42,11 @@ export default function TopNav() {
     if (!lenis) return;
     const handler = ({ scroll }: { scroll: number }) => {
       const threshold = window.innerHeight * 0.5;
-      setExpanded(scroll > threshold);
+      setScrollExpanded((prev) => {
+        if (!prev && scroll > threshold) return true;
+        if (prev && scroll < threshold * 0.85) return false;
+        return prev;
+      });
     };
     lenis.on("scroll", handler);
     return () => {
@@ -64,24 +69,29 @@ export default function TopNav() {
   };
 
   const nextLocale = locale === "it" ? "en" : "it";
+  const showLinks = scrollExpanded || hoverExpanded;
 
   return (
     <>
       {/* Desktop nav — dynamic island pill */}
-      <nav className="fixed top-6 right-8 z-50 hidden md:block">
+      <nav
+        className="fixed top-6 right-8 z-50 hidden md:block"
+        onMouseEnter={() => setHoverExpanded(true)}
+        onMouseLeave={() => setHoverExpanded(false)}
+      >
         <motion.div
           layout
-          transition={{ type: "spring", stiffness: 350, damping: 30 }}
+          transition={{ type: "spring", stiffness: 280, damping: 32 }}
           className="flex items-center gap-1 rounded-full bg-bg-secondary/85 backdrop-blur-xl border border-glass-border px-3 py-2"
         >
-          {/* Nav links — only when expanded */}
+          {/* Nav links — visible on scroll or hover */}
           <AnimatePresence>
-            {expanded && (
+            {showLinks && (
               <motion.div
-                initial={{ width: 0, opacity: 0 }}
-                animate={{ width: "auto", opacity: 1 }}
-                exit={{ width: 0, opacity: 0 }}
-                transition={{ type: "spring", stiffness: 350, damping: 30 }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.15 }}
                 className="flex items-center gap-1 overflow-hidden"
               >
                 {navKeys.map((key) => (
@@ -96,8 +106,8 @@ export default function TopNav() {
                         className="absolute inset-0 rounded-full bg-amber/20 border border-amber/40"
                         transition={{
                           type: "spring",
-                          stiffness: 350,
-                          damping: 30,
+                          stiffness: 280,
+                          damping: 32,
                         }}
                       />
                     )}
@@ -141,59 +151,7 @@ export default function TopNav() {
           >
             {nextLocale}
           </Link>
-
-          {/* Divider — only when collapsed (hamburger visible) */}
-          {!expanded && (
-            <>
-              <div className="w-px h-5 bg-glass-border mx-1" />
-              <button
-                onClick={() => setMenuOpen(!menuOpen)}
-                className="flex h-8 w-8 items-center justify-center rounded-full text-text-secondary transition-colors duration-200 hover:text-text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-amber"
-                aria-label="Toggle menu"
-              >
-                {menuOpen ? (
-                  <X className="h-4 w-4" />
-                ) : (
-                  <Menu className="h-4 w-4" />
-                )}
-              </button>
-            </>
-          )}
         </motion.div>
-
-        {/* Dropdown menu when hamburger is clicked (collapsed state) */}
-        <AnimatePresence>
-          {menuOpen && !expanded && (
-            <motion.div
-              initial={{ opacity: 0, y: -8, scale: 0.95 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -8, scale: 0.95 }}
-              transition={{ duration: 0.2, ease: "easeOut" }}
-              className="absolute top-full right-0 mt-2 rounded-2xl bg-bg-secondary/90 backdrop-blur-xl border border-glass-border p-3 min-w-[180px]"
-            >
-              {navKeys.map((key) => (
-                <Link
-                  key={key}
-                  href={navHrefs[key]}
-                  className="relative block px-4 py-2.5 font-body font-medium text-[14px] text-text-secondary transition-colors duration-200 hover:text-text-primary rounded-lg"
-                >
-                  {activeKey === key && (
-                    <motion.div
-                      layoutId="nav-selector-dropdown"
-                      className="absolute inset-0 rounded-lg bg-amber/20 border border-amber/40"
-                      transition={{
-                        type: "spring",
-                        stiffness: 350,
-                        damping: 30,
-                      }}
-                    />
-                  )}
-                  <span className="relative z-10">{t(key)}</span>
-                </Link>
-              ))}
-            </motion.div>
-          )}
-        </AnimatePresence>
       </nav>
 
       {/* Mobile nav */}
