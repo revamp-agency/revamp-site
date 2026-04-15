@@ -317,8 +317,13 @@ html.transitioning-theme *::after {
 
 /* --- Custom cursor: hide native cursor --- */
 .custom-cursor-active,
-.custom-cursor-active * {
+.custom-cursor-active *:not([data-debug-panel] *):not([data-debug-panel]) {
   cursor: none !important;
+}
+[data-debug-panel],
+[data-debug-panel] * {
+  cursor: auto !important;
+  pointer-events: auto !important;
 }
 
 /* --- Focus rings --- */
